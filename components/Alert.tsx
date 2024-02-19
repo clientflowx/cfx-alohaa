@@ -19,13 +19,15 @@ const Alert: React.FC<AlertProps> = ({ type, message }) => {
   };
   return (
     <div
-      className="max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
+      className="absolute bottom-[20px] left-1/2 w-lg bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
       role="alert"
     >
       <div className="flex p-4">
         <div className="flex-shrink-0">
           <svg
-            className="flex-shrink-0 size-4 text-teal-500 mt-0.5"
+            className={`flex-shrink-0 size-4 mt-0.5 ${
+              type === "success" ? "text-teal-500" : "text-red-500 "
+            }`}
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"

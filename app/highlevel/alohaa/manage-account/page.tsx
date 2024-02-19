@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { apiUrl } from "@/config";
 import axios from "axios";
 import Alert from "@/components/Alert";
+import { Phone } from "@/svg/phone";
+import { User } from "@/svg/user";
 
 interface locationDataIF {
   didNumbers: string | null;
@@ -150,108 +152,105 @@ const ManageAccount: React.FC = () => {
   return (
     <>
       <div
+        className="flex  p-2"
         style={{
-          display: "flex",
           background: "dodgerblue",
-          width: "100vw",
-          height: "50px",
-          alignItems: "center",
         }}
       >
         <img
           src="https://msgsndr-private.storage.googleapis.com/companyPhotos/83ddb2ac-fcce-4455-aff1-b635357a4719.png"
           alt="clientflowx_logo_img"
-          style={{ width: "200px" }}
+          style={{ width: "160px" }}
         />
-        {/* <h2 style={{color:"white",fontSize:"3rem"}}>X</h2> &nbsp;&nbsp; */}
         &nbsp;&nbsp;&nbsp;
         <img
           src="https://business.alohaa.ai/static/media/alohaaLogoAndWhiteText.92d0e338.svg"
-          style={{ width: "200px" }}
+          style={{ width: "120px" }}
           alt="alloha_logo_img"
         />
       </div>
-      <h2 style={{ textAlign: "center", fontSize: "2.3rem" }}>
-        Manage Your Alohaa Integration With ClientFlowX
+      <h2 className="text-center text-2xl mt-4">
+        Enhance Your Alohaa Integration with ClientFlowX
       </h2>
-      {(showError || showSuccess) && (
-        <Alert
-          type={showError ? "error" : "success"}
-          message={alertMsg?.current}
-        />
-      )}
-      <div>
-        <div className="w-[345px] rounded overflow-hidden shadow-lg">
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2"> Add Numbers</div>
-            <div>
-              <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Enter DID Number"
-                ref={didNumberRefAddNumbers}
-                required
-              />
-              <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Enter Caller Number"
-                ref={callerNumberRefAddNumbers}
-                required
-              />
-              <button
-                type="submit"
-                onClick={handleAddNumbers}
-                className="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Add Now
-              </button>
+      <div className="flex p-4 mt-6">
+        <div className="w-1/5 mr-8">
+          <div className="w-100 rounded overflow-hidden shadow-lg">
+            <div className="px-6 py-4">
+              <div className="flex justify-between items-center mb-2">
+                <div className=" text-lg"> Add Numbers</div>
+                <Phone />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  id="first_name"
+                  className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter DID Number"
+                  ref={didNumberRefAddNumbers}
+                  required
+                />
+                <input
+                  type="text"
+                  id="first_name"
+                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter Caller Number"
+                  ref={callerNumberRefAddNumbers}
+                  required
+                />
+                <button
+                  type="submit"
+                  onClick={handleAddNumbers}
+                  className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                >
+                  Add Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 w-100 rounded overflow-hidden shadow-lg">
+            <div className="px-6 py-4">
+              <div className="flex justify-between items-center mb-2">
+                <div className=" text-lg"> Add Users</div>
+                <User />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  id="first_name"
+                  className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter Email"
+                  ref={addUserEmailRef}
+                  required
+                />
+                <input
+                  type="text"
+                  id="first_name"
+                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter DID Number"
+                  ref={addUserDidMobileNumberRef}
+                  required
+                />
+                <input
+                  type="text"
+                  id="first_name"
+                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                  placeholder="Enter Caller Number"
+                  ref={addUserCallerMobileNumberRef}
+                  required
+                />
+                <button
+                  type="submit"
+                  onClick={handleAddUser}
+                  className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                >
+                  Add Now
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="w-[345px] rounded overflow-hidden shadow-lg">
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2"> Add Users</div>
-            <div>
-              <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Enter Email"
-                ref={addUserEmailRef}
-                required
-              />
-              <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Enter DID Number"
-                ref={addUserDidMobileNumberRef}
-                required
-              />
-              <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Enter Caller Number"
-                ref={addUserCallerMobileNumberRef}
-                required
-              />
-              <button
-                type="submit"
-                onClick={handleAddUser}
-                className="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Add Now
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative overflow-x-auto">
+        <div className="w-4/5 relative overflow-x-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
             <thead className="text-xs text-gray-700 uppercase ">
               <tr>
@@ -269,7 +268,10 @@ const ManageAccount: React.FC = () => {
             <tbody>
               {locationData?.users?.map((item, idx) => {
                 return (
-                  <tr className="bg-white border-b" key={`item-${idx}`}>
+                  <tr
+                    className="bg-white border-b odd:bg-gray-100"
+                    key={`item-${idx}`}
+                  >
                     <td className="px-6 py-4">{item?.email}</td>
                     <td className="px-6 py-4">{item?.didNumber}</td>
                     <td className="px-6 py-4">{item?.callerNumber}</td>
@@ -280,6 +282,12 @@ const ManageAccount: React.FC = () => {
           </table>
         </div>
       </div>
+      {(showError || showSuccess) && (
+        <Alert
+          type={showError ? "error" : "success"}
+          message={alertMsg?.current}
+        />
+      )}
     </>
   );
 };
