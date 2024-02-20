@@ -39,39 +39,9 @@ const ManageAccount: React.FC = () => {
   // const didNumberRefMakeCall = useRef('918069738302'); // Create a ref for Make a Call DID number
   // const callerNumberRefMakeCall = useRef(null); // Create a ref for Make a Call Caller number
   // const receiverNumberRefMakeCall = useRef(null) // Receiver Number Ref
-  const didNumberRefAddNumbers = useRef<HTMLInputElement | null>(null); // Create a ref for Add Numbers DID number
-  const callerNumberRefAddNumbers = useRef<HTMLInputElement | null>(null); // Create a ref for Add Numbers Caller number
   const addUserEmailRef = useRef<HTMLInputElement | null>(null); // add new user email
   const addUserDidMobileNumberRef = useRef<HTMLInputElement | null>(null); //add new user did mobile number
   const addUserCallerMobileNumberRef = useRef<HTMLInputElement | null>(null); // add new user caller mobile number
-
-  const handleAddNumbers = async () => {
-    try {
-      // Access the values using ref.current.value
-      const didNumber = didNumberRefAddNumbers?.current?.value;
-      const callerNumber = callerNumberRefAddNumbers?.current?.value;
-      if (!didNumber && !callerNumber) return;
-      await axios.post(`${apiUrl}/api/crmalloha/update`, {
-        didNumber: didNumber,
-        callerNumber: callerNumber,
-        locationId: currentLocationId,
-      });
-      alertMsg.current = "Details Update Success";
-      setShowSuccess(true);
-      console.log("current", currentLocationId);
-      fetchUserInfo(currentLocationId); // to fetch updated data
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
-    } catch (err: any) {
-      console.log(err);
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
-      alertMsg.current = err?.response?.data?.error || "Some Error Occured";
-    }
-  };
 
   const handleAddUser = async () => {
     try {
@@ -141,7 +111,6 @@ const ManageAccount: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("Hello");
     const locationId = new URL(window.location.href).searchParams.get(
       "locationId"
     );
@@ -173,41 +142,7 @@ const ManageAccount: React.FC = () => {
         Enhance Your Alohaa Integration with ClientFlowX
       </h2>
       <div className="flex lg:flex-row md:flex-col sm:flex-col p-4 mt-6">
-        <div className="lg:w-[340px] flex md:w-full md:flex-row md:justify-around sm:w-full sm:w-full sm:flex-row sm:justify-around lg:flex-col lg:mr-8 md:mr-0">
-          <div className="lg:w-100 md:w-[340px] sm:w-[340px] rounded overflow-hidden shadow-lg">
-            <div className="px-6 py-4">
-              <div className="flex justify-between items-center mb-2">
-                <div className=" text-lg"> Add Numbers</div>
-                <Phone />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  id="first_name"
-                  className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Enter DID Number"
-                  ref={didNumberRefAddNumbers}
-                  required
-                />
-                <input
-                  type="text"
-                  id="first_name"
-                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Enter Caller Number"
-                  ref={callerNumberRefAddNumbers}
-                  required
-                />
-                <button
-                  type="submit"
-                  onClick={handleAddNumbers}
-                  className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                >
-                  Add Now
-                </button>
-              </div>
-            </div>
-          </div>
-
+        <div className="lg:w-[340px] flex md:w-full md:flex-row lg:justify-start sm:w-full sm:w-full sm:flex-row sm:justify-center lg:flex-col lg:mr-8 md:mr-0">
           <div className="lg:mt-10 md:mt-0 lg:w-100 md:w-[340px] sm:w-[340px] rounded overflow-hidden shadow-lg">
             <div className="px-6 py-4">
               <div className="flex justify-between items-center mb-2">
