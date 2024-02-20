@@ -172,9 +172,9 @@ const ManageAccount: React.FC = () => {
       <h2 className="text-center text-2xl mt-4">
         Enhance Your Alohaa Integration with ClientFlowX
       </h2>
-      <div className="flex p-4 mt-6">
-        <div className="w-1/5 mr-8">
-          <div className="w-100 rounded overflow-hidden shadow-lg">
+      <div className="flex lg:flex-row md:flex-col sm:flex-col p-4 mt-6">
+        <div className="lg:w-[340px] flex md:w-full md:flex-row md:justify-around sm:w-full sm:w-full sm:flex-row sm:justify-around lg:flex-col lg:mr-8 md:mr-0">
+          <div className="lg:w-100 md:w-[340px] sm:w-[340px] rounded overflow-hidden shadow-lg">
             <div className="px-6 py-4">
               <div className="flex justify-between items-center mb-2">
                 <div className=" text-lg"> Add Numbers</div>
@@ -208,7 +208,7 @@ const ManageAccount: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-10 w-100 rounded overflow-hidden shadow-lg">
+          <div className="lg:mt-10 md:mt-0 lg:w-100 md:w-[340px] sm:w-[340px] rounded overflow-hidden shadow-lg">
             <div className="px-6 py-4">
               <div className="flex justify-between items-center mb-2">
                 <div className=" text-lg"> Add Users</div>
@@ -250,7 +250,7 @@ const ManageAccount: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="w-4/5 relative overflow-x-auto">
+        <div className="lg:w-4/5 md:w-full sm:mt-8 relative overflow-x-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
             <thead className="text-xs text-gray-700 uppercase ">
               <tr>
