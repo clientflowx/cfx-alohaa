@@ -25,7 +25,7 @@ const Alloha = () => {
 
   const handleAccessNowBtn = () => {
     window.open(
-      `https://clientflowx-app.netlify.app/highlevel/alloha/manage-account?locationId=${currentLocationId}`,
+      `https://integration-cfx.netlify.app/highlevel/alohaa/manage-account?locationId=${currentLocationId}`,
       "_blank"
     );
 
