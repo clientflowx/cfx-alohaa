@@ -177,18 +177,6 @@ const Alloha = () => {
       >
         Update API Key
       </button>
-
-      {/* {open && (
-        <AccessModal
-          locationData={locationData}
-          open={open}
-          setOpen={setOpen}
-          apiKey={apiKey}
-          img={img}
-          currentLocationId={currentLocationId}
-          fetchUserInfo={fetchUserInfo}
-        />
-      )} */}
     </div>
   );
 };
