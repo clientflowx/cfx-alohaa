@@ -87,7 +87,6 @@ const ManageAccount: React.FC = () => {
   };
 
   const fetchUserInfo = async (locationId: string | null) => {
-    console.log(locationId);
     try {
       const { data } = await axios.get(
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`

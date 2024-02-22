@@ -2,9 +2,9 @@
 
 import Alert from "@/components/Alert";
 import { apiUrl } from "@/config";
-import { Phone } from "@/svg/phone";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { LocationDataType } from "./call-info/types";
 
 const Alloha = () => {
   let apiKey = "Your api key";
@@ -12,7 +12,9 @@ const Alloha = () => {
   //     "https://business.alohaa.ai/static/media/alohaaLogoAndWhiteText.92d0e338.svg";
 
   const alertMsg = useRef("");
-  const [locationData, setLocationData] = useState<any>(null);
+  const [locationData, setLocationData] = useState<LocationDataType | null>(
+    null
+  );
   const [showError, setShowError] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(
@@ -73,12 +75,11 @@ const Alloha = () => {
       const { data } = await axios.get(
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
       );
-      console.log("datafromallohaiframe", data);
+
       if (data?.data?.success) {
         if (data?.data?.data?.apiKey) {
           setLocationData(data?.data?.data);
         } else {
-          console.log("here2");
           alertMsg.current = "Please Add Your API Key";
           setShowError(true);
           setTimeout(() => {
@@ -106,7 +107,6 @@ const Alloha = () => {
       didNumberRefAddNumbers.current!.value = locationData?.didNumbers;
       callerNumberRefAddNumbers.current!.value = locationData?.callerNumbers;
     }
-    console.log(locationData);
   }, [locationData]);
 
   useEffect(() => {

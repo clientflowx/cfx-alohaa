@@ -4,19 +4,24 @@ import { convertStoMs } from "@/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useEffect } from "react";
 import { Doughnut } from "react-chartjs-2";
+import { CallDurationType } from "./types";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-const CallByStatus: React.FC<{ callDuration: any }> = ({ callDuration }) => {
+const CallByStatus: React.FC<{ callDuration: CallDurationType[] }> = ({
+  callDuration,
+}) => {
   const callLabels = ["Answered", "Unanswered"];
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
   const answeredCalls = callDuration.filter(
-    (call: any) => call.status === "answered"
+    (call: CallDurationType) => call.status === "answered"
   );
   const numAnsweredCalls = answeredCalls.length;
   const numUnAnsweredCalls = callDuration.length - answeredCalls.length;
   let totalCallDuration = 0;
 
-  answeredCalls.forEach((call: any) => (totalCallDuration += call.duration));
+  answeredCalls.forEach(
+    (call: CallDurationType) => (totalCallDuration += call.duration)
+  );
   const avgCallDuration = convertStoMs(
     totalCallDuration / answeredCalls.length
   );
