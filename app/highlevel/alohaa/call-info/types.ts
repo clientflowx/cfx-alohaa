@@ -1,5 +1,5 @@
 interface CallDurationType {
-  duration: number;
+  duration: number | string;
   status: string;
   agent: string;
 }

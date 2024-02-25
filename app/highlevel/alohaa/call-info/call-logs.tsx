@@ -35,7 +35,10 @@ const CallLogsTable: React.FC<{ callResponseData: CallResponseType[] }> = ({
             {callLogs.map((log: CallResponseType, index) => (
               <tr className="pt-4" key={index}>
                 {tableColumns.map((column: string) => {
-                  if (column === "recording_url") {
+                  if (
+                    column === "recording_url" ||
+                    column === "call_recording_url"
+                  ) {
                     return (
                       <td className="text-center" key={column}>
                         <audio className="mt-4" controls>
