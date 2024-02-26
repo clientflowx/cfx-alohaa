@@ -2,22 +2,25 @@
 
 import Alert from "@/components/Alert";
 import { apiUrl } from "@/config";
-import { Phone } from "@/svg/phone";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { LocationDataType } from "./call-info/types";
 
 const Alloha = () => {
   let apiKey = "Your api key";
   //   const alohaaImg =
   //     "https://business.alohaa.ai/static/media/alohaaLogoAndWhiteText.92d0e338.svg";
-  const [open, setOpen] = useState<boolean>(false);
+
   const alertMsg = useRef("");
-  const [locationData, setLocationData] = useState<any>(null);
+  const [locationData, setLocationData] = useState<LocationDataType | null>(
+    null
+  );
   const [showError, setShowError] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(
     null
   );
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const allohaApiKeyRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
   const didNumberRefAddNumbers = useRef<HTMLInputElement | null>(null); // Create a ref for Add Numbers DID number
@@ -28,12 +31,6 @@ const Alloha = () => {
       `https://integration-cfx.netlify.app/highlevel/alohaa/manage-account?locationId=${currentLocationId}`,
       "_blank"
     );
-
-    // setOpen(true);
-  };
-
-  const handleVisitWebsiteClick = () => {
-    window.open("https://business.alohaa.ai", "_blank");
   };
 
   // handle update api key request
@@ -78,12 +75,11 @@ const Alloha = () => {
       const { data } = await axios.get(
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
       );
-      console.log("datafromallohaiframe", data);
+
       if (data?.data?.success) {
         if (data?.data?.data?.apiKey) {
           setLocationData(data?.data?.data);
         } else {
-          console.log("here2");
           alertMsg.current = "Please Add Your API Key";
           setShowError(true);
           setTimeout(() => {
@@ -98,11 +94,19 @@ const Alloha = () => {
 
   useEffect(() => {
     // Set the initial value of allohaApiKeyRef when apiKey prop changes
+    if (
+      locationData?.apiKey &&
+      locationData?.email &&
+      locationData?.didNumbers &&
+      locationData?.callerNumbers
+    )
+      setIsConnected(true);
     if (locationData?.apiKey && locationData?.email) {
       allohaApiKeyRef.current!.value = locationData?.apiKey;
       emailRef.current!.value = locationData?.email;
+      didNumberRefAddNumbers.current!.value = locationData?.didNumbers;
+      callerNumberRefAddNumbers.current!.value = locationData?.callerNumbers;
     }
-    console.log(locationData);
   }, [locationData]);
 
   useEffect(() => {
@@ -122,7 +126,7 @@ const Alloha = () => {
         />
       )}
 
-      <div className=" text-lg"> Alohaa</div>
+      <div className=" text-lg mb-2"> Alohaa</div>
 
       <input
         type="text"
@@ -159,23 +163,21 @@ const Alloha = () => {
       <button
         type="submit"
         onClick={handleAccessNowBtn}
-        className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center mr-2"
+        className={`mt-4  border border-transparent focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
+        rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${
+          isConnected
+            ? "bg-[#37ca411a] text-[#37ca37] "
+            : "bg-[#38A0DB] text-white"
+        }`}
       >
-        Access Now
-      </button>
-      <button
-        type="submit"
-        onClick={handleVisitWebsiteClick}
-        className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center mr-2"
-      >
-        Visit Website
+        {isConnected ? "Connected" : "Connect"}
       </button>
       <button
         type="submit"
         onClick={handleSubmit}
-        className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-2 py-2.5 text-center "
+        className="text-[#38A0DB] mt-4 border border-[#38A0DB] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-4 py-2 text-center "
       >
-        Update API Key
+        Manage
       </button>
     </div>
   );

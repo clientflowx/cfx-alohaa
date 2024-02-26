@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { useEffect } from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
+import { CallDurationType } from "./types";
 
 ChartJS.register(
   CategoryScale,
@@ -22,10 +23,20 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const TopAgents: React.FC<{ callDuration: any }> = ({ callDuration }) => {
-  const agentMap: any = {};
+interface CallDataType {
+  totalCall: number;
+  duration: number;
+}
+interface agentMapType {
+  [agentName: string]: CallDataType;
+}
 
-  callDuration.forEach((call: any) => {
+const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
+  callDuration,
+}) => {
+  const agentMap: agentMapType = {};
+
+  callDuration.forEach((call: CallDurationType) => {
     let agentName = call?.agent;
     if (agentMap[agentName]) {
       let currAgentObj = agentMap[agentName];
@@ -41,25 +52,23 @@ const TopAgents: React.FC<{ callDuration: any }> = ({ callDuration }) => {
   });
 
   const agentEntries = Object.entries(agentMap);
-  agentEntries.sort((a: any, b: any) => {
+
+  agentEntries.sort((a: [string, CallDataType], b: [string, CallDataType]) => {
     return b[1].totalCall - a[1].totalCall;
   });
 
   const sortedAgentMap = [];
-  for (let entry = 0; entry < 2; entry++) {
+  for (let entry in agentEntries) {
     let agentName = agentEntries?.[entry]?.[0];
-    let agentData: any = agentEntries?.[entry]?.[1];
-    console.log(agentData);
+    let agentData: CallDataType = agentEntries?.[entry]?.[1];
+
     const agentObj = { ...agentData, agentName };
     sortedAgentMap.push(agentObj);
   }
 
-  const callLabels = [
-    sortedAgentMap[0]?.agentName,
-    sortedAgentMap[1]?.agentName,
-  ];
+  const callLabels = sortedAgentMap.map((agent) => agent?.agentName);
 
-  const callData = [sortedAgentMap[0]?.totalCall, sortedAgentMap[1]?.totalCall];
+  const callData = sortedAgentMap.map((agent) => agent?.totalCall);
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
 
   const columns = ["Agents", "Total Calls", "Average Duration"];
