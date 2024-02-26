@@ -104,8 +104,9 @@ const CallInfo = () => {
   return (
     <>
       <div className="mt-6 px-6 py-4 flex text-sm font-medium text-center text-gray-500 ">
-        {Object.keys(tabs)?.map((tab) => (
+        {Object.keys(tabs)?.map((tab, index) => (
           <span
+            key={index}
             onClick={handleTabSwitch}
             className={`inline-block p-4 border-b-2 rounded-t-lg ${
               tab === activeTab ? "border-[#006CEB]" : "border-transparent"
