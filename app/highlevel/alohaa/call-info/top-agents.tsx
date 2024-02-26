@@ -11,8 +11,8 @@ import {
   BarElement,
   Title,
 } from "chart.js";
-import { useEffect } from "react";
-import { Bar, Doughnut } from "react-chartjs-2";
+
+import { Bar } from "react-chartjs-2";
 import { CallDurationType } from "./types";
 
 ChartJS.register(
@@ -31,9 +31,10 @@ interface agentMapType {
   [agentName: string]: CallDataType;
 }
 
-const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
-  callDuration,
-}) => {
+const TopAgents: React.FC<{
+  callDuration: CallDurationType[];
+  nameFilter: string;
+}> = ({ callDuration, nameFilter }) => {
   const agentMap: agentMapType = {};
 
   callDuration.forEach((call: CallDurationType) => {
@@ -74,6 +75,7 @@ const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
       }
     }
   });
+
   for (let key in agentMap) {
     let durationObj = convertStoMs(+agentMap[key].duration);
     agentMap[key].duration = `${durationObj.minutes}m:${durationObj.seconds}s`;
@@ -94,12 +96,27 @@ const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
     sortedAgentMap.push(agentObj);
   }
 
-  const callLabels = sortedAgentMap.map((agent) => agent?.agentName);
+  const callLabels =
+    nameFilter === "all"
+      ? sortedAgentMap.map((agent) => {
+          return agent?.agentName;
+        })
+      : sortedAgentMap.map((agent) => {
+          return agent?.agentName === nameFilter ? agent?.agentName : "";
+        });
 
-  const callData = sortedAgentMap.map((agent) => agent?.totalCall);
+  const callData =
+    nameFilter === "all"
+      ? sortedAgentMap.map((agent) => {
+          return agent?.totalCall;
+        })
+      : sortedAgentMap.map((agent) => {
+          return agent?.agentName === nameFilter ? agent?.totalCall : "";
+        });
+
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
 
-  const columns = ["Agents", "Total Calls", "Average Duration"];
+  const columns = ["Agents", "Total Calls", "Total Duration"];
   const data = {
     labels: callLabels,
     datasets: [
@@ -150,16 +167,31 @@ const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
                 </tr>
               </thead>
               <tbody>
-                {sortedAgentMap.map((log, index) => (
+                {nameFilter === "all" ? (
+                  sortedAgentMap.map((log, index) => (
+                    <tr
+                      key={index}
+                      className="border-t border-bg-gray-200 hover:bg-gray-100"
+                    >
+                      <td className="py-4 text-center">{log?.agentName}</td>
+                      <td className="pt-4 text-center">{log?.totalCall}</td>
+                      <td className="pt-4 text-center">{log?.duration}</td>
+                    </tr>
+                  ))
+                ) : (
                   <tr
-                    key={index}
+                    key={nameFilter}
                     className="border-t border-bg-gray-200 hover:bg-gray-100"
                   >
-                    <td className="py-4 text-center">{log?.agentName}</td>
-                    <td className="pt-4 text-center">{log?.totalCall}</td>
-                    <td className="pt-4 text-center">{log?.duration}</td>
+                    <td className="py-4 text-center">{nameFilter}</td>
+                    <td className="pt-4 text-center">
+                      {agentMap[nameFilter]?.totalCall}
+                    </td>
+                    <td className="pt-4 text-center">
+                      {agentMap[nameFilter]?.duration}
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

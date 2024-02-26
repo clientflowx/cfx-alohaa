@@ -1,9 +1,15 @@
 import { CallResponseType } from "./types";
 
-const CallLogsTable: React.FC<{ callResponseData: CallResponseType[] }> = ({
-  callResponseData,
-}) => {
+const CallLogsTable: React.FC<{
+  callResponseData: CallResponseType[];
+  nameFilter: string;
+}> = ({ callResponseData, nameFilter }) => {
   const callLogs: CallResponseType[] = callResponseData;
+
+  const filteredCallLogs =
+    nameFilter !== "all"
+      ? callResponseData.filter((log) => log.agent_name === nameFilter)
+      : callResponseData;
 
   if (!callLogs) {
     <p>Fetching Data....</p>;
@@ -32,7 +38,7 @@ const CallLogsTable: React.FC<{ callResponseData: CallResponseType[] }> = ({
             </tr>
           </thead>
           <tbody>
-            {callLogs.map((log: CallResponseType, index) => (
+            {filteredCallLogs.map((log: CallResponseType, index) => (
               <tr className="pt-4" key={index}>
                 {tableColumns.map((column: string) => {
                   if (

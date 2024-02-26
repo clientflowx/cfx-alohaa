@@ -4,20 +4,37 @@ import { convertStoMs } from "@/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { CallDurationType } from "./types";
+import { useEffect, useState } from "react";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const CallByStatus: React.FC<{
   callDuration: CallDurationType[];
   type: string | null;
-}> = ({ callDuration, type }) => {
+  nameFilter: string;
+}> = ({ callDuration, type, nameFilter }) => {
   const callLabels = ["Answered", "Unanswered"];
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
-  const answeredCalls = callDuration?.filter(
-    (call: CallDurationType) => call.status.toLowerCase() === "answered"
-  );
+
+  const allCalls =
+    nameFilter !== "all"
+      ? callDuration.filter(
+          (call: CallDurationType) => call.agent === nameFilter
+        )
+      : callDuration;
+
+  const answeredCalls =
+    nameFilter !== "all"
+      ? callDuration
+          ?.filter(
+            (call: CallDurationType) => call.status.toLowerCase() === "answered"
+          )
+          .filter((call: CallDurationType) => call.agent === nameFilter)
+      : callDuration?.filter(
+          (call: CallDurationType) => call.status.toLowerCase() === "answered"
+        );
 
   const numAnsweredCalls = answeredCalls.length;
-  const numUnAnsweredCalls = callDuration.length - answeredCalls.length;
+  const numUnAnsweredCalls = allCalls.length - answeredCalls.length;
   let totalCallDuration = 0;
 
   answeredCalls?.forEach((call: CallDurationType) => {
