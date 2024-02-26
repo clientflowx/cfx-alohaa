@@ -31,8 +31,10 @@ const CallMetrics: React.FC<{
           <option value="all" selected>
             Choose a name
           </option>
-          {Array.from(agentList)?.map((data) => (
-            <option value={data}>{data}</option>
+          {Array.from(agentList)?.map((data, idx) => (
+            <option key={`${data}-${idx}`} value={data}>
+              {data}
+            </option>
           ))}
         </select>
         {callResponseData.length === 0 ? (

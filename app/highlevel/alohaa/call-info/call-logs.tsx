@@ -39,14 +39,17 @@ const CallLogsTable: React.FC<{
           </thead>
           <tbody>
             {filteredCallLogs.map((log: CallResponseType, index) => (
-              <tr className="pt-4" key={index}>
-                {tableColumns.map((column: string) => {
+              <tr className="pt-4" key={`log-${index}`}>
+                {tableColumns.map((column: string, index) => {
                   if (
                     column === "recording_url" ||
                     column === "call_recording_url"
                   ) {
                     return (
-                      <td className="text-center" key={column}>
+                      <td
+                        className="text-center"
+                        key={`log-${column}-${index}`}
+                      >
                         <audio className="mt-4" controls>
                           <source src={log[column]} type="audio/mp3" />
                           {/* Include a track element if captions are required */}

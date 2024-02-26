@@ -170,7 +170,7 @@ const TopAgents: React.FC<{
                 {nameFilter === "all" ? (
                   sortedAgentMap.map((log, index) => (
                     <tr
-                      key={index}
+                      key={`agent-${index}`}
                       className="border-t border-bg-gray-200 hover:bg-gray-100"
                     >
                       <td className="py-4 text-center">{log?.agentName}</td>
