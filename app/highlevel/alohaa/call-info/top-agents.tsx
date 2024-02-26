@@ -25,7 +25,7 @@ ChartJS.register(
 );
 interface CallDataType {
   totalCall: number;
-  duration: number;
+  duration: number | string;
 }
 interface agentMapType {
   [agentName: string]: CallDataType;
@@ -41,15 +41,43 @@ const TopAgents: React.FC<{ callDuration: CallDurationType[] }> = ({
     if (agentMap[agentName]) {
       let currAgentObj = agentMap[agentName];
       agentMap[agentName].totalCall = currAgentObj.totalCall + 1;
-      agentMap[agentName].duration = currAgentObj.duration + call.duration;
+
+      if (typeof call.duration !== "string")
+        agentMap[agentName].duration = +currAgentObj.duration + call.duration;
+      else {
+        const callDurationArr = call.duration.split(":");
+
+        let seconds = callDurationArr[2];
+        let minutes = callDurationArr[1];
+        let hours = callDurationArr[0];
+        let totalCallDuration = 0,
+          newDuration = 0;
+        totalCallDuration += +hours * 3600 + +minutes * 60 + +seconds;
+        newDuration += +currAgentObj.duration + +seconds;
+        agentMap[agentName].duration = newDuration;
+      }
     } else {
       const agentObj = {
         totalCall: 1,
         duration: call.duration,
       };
       agentMap[agentName] = agentObj;
+      if (typeof call.duration === "string") {
+        let duration = call.duration.length === 0 ? "00:00:00" : call.duration;
+        const callDurationArr = duration.split(":");
+        let seconds = callDurationArr[2];
+        let minutes = callDurationArr[1];
+        let hours = callDurationArr[0];
+        let totalCallDuration = 0;
+        totalCallDuration += +hours * 3600 + +minutes * 60 + +seconds;
+        agentObj.duration = totalCallDuration;
+      }
     }
   });
+  for (let key in agentMap) {
+    let durationObj = convertStoMs(+agentMap[key].duration);
+    agentMap[key].duration = `${durationObj.minutes}m:${durationObj.seconds}s`;
+  }
 
   const agentEntries = Object.entries(agentMap);
 

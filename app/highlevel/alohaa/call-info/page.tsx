@@ -63,7 +63,7 @@ const CallInfo = () => {
     try {
       setLoader(true);
       const { data } = await axios.get(
-        `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
+        `${apiUrl}/api/crmalloha/fetchlocationinfo/L5KNiAsUDWR56VLxY299`
       );
 
       const callLogsData = data?.data?.data?.callDetails || [];

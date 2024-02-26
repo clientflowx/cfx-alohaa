@@ -15,7 +15,7 @@ const CallByStatus: React.FC<{
   const answeredCalls = callDuration?.filter(
     (call: CallDurationType) => call.status.toLowerCase() === "answered"
   );
-  console.log(answeredCalls);
+
   const numAnsweredCalls = answeredCalls.length;
   const numUnAnsweredCalls = callDuration.length - answeredCalls.length;
   let totalCallDuration = 0;
@@ -27,7 +27,6 @@ const CallByStatus: React.FC<{
       let minutes = callDurationArr[1];
       let hours = callDurationArr[0];
       totalCallDuration += +hours * 3600 + +minutes * 60 + +seconds;
-      console.log(totalCallDuration);
     } else totalCallDuration += +call.duration;
 
     return totalCallDuration;
