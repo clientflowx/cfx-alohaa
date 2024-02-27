@@ -10,9 +10,17 @@ const CallMetrics: React.FC<{
   callResponseData: CallResponseType[];
   type: string | null;
   loading: boolean;
-}> = ({ callDuration, callResponseData, type, loading }) => {
+  nameFilter: string;
+  setNameFilter: React.Dispatch<React.SetStateAction<string>>;
+}> = ({
+  callDuration,
+  callResponseData,
+  type,
+  loading,
+  nameFilter,
+  setNameFilter,
+}) => {
   const agentList = new Set(callDuration?.map((data) => data?.agent));
-  const [nameFilter, setNameFilter] = useState<string>("all"); //set default filter to all names
 
   const handleFilterUpdate: ChangeEventHandler<HTMLSelectElement> = (e) => {
     setNameFilter(e.target.value);

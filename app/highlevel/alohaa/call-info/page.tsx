@@ -34,6 +34,7 @@ const CallInfo = () => {
   const [loader, setLoader] = useState(true);
   const [callDuration, setCallDuration] = useState<CallDurationType[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("INCOMING");
+  const [nameFilter, setNameFilter] = useState<string>("all");
   // fetch call info of location
   const fetchCallsInfo = async (locationId: string | null) => {
     try {
@@ -89,6 +90,7 @@ const CallInfo = () => {
   const handleTabSwitch = (e: React.MouseEvent<HTMLSpanElement>) => {
     const currentTab = (e.target as HTMLSpanElement).getAttribute("data-value");
     setActiveTab(currentTab);
+    setNameFilter("all");
   };
 
   useEffect(() => {
@@ -118,6 +120,8 @@ const CallInfo = () => {
         ))}
       </div>
       <CallMetrics
+        nameFilter={nameFilter}
+        setNameFilter={setNameFilter}
         callDuration={callDuration}
         type={activeTab}
         loading={loader}
