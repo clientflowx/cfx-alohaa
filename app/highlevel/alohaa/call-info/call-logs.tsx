@@ -1,15 +1,44 @@
+import { parseTimeStringInS } from "@/utils";
 import { CallResponseType } from "./types";
+import { format } from "date-fns";
 
 const CallLogsTable: React.FC<{
   callResponseData: CallResponseType[];
+  type: string | null;
   nameFilter: string;
-}> = ({ callResponseData, nameFilter }) => {
+  statusFilter: string;
+  minDurationFilter: number;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}> = ({
+  callResponseData,
+  nameFilter,
+  statusFilter,
+  type,
+  minDurationFilter,
+  startDate,
+  endDate,
+}) => {
   const callLogs: CallResponseType[] = callResponseData;
 
-  const filteredCallLogs =
-    nameFilter !== "all"
-      ? callResponseData.filter((log) => log.agent_name === nameFilter)
-      : callResponseData;
+  const filteredCallLogs = callLogs.filter((call) => {
+    let parsedDuration =
+      type === "INCOMING"
+        ? parseTimeStringInS(String(call.call_duration))
+        : call.call_duration!;
+
+    return (
+      (nameFilter === "all" || call.agent_name === nameFilter) &&
+      (statusFilter === "all" || call.status?.toLowerCase() === statusFilter) &&
+      (minDurationFilter === 0 || +parsedDuration >= minDurationFilter) &&
+      (startDate === undefined ||
+        endDate === undefined ||
+        (format(new Date(call.received_at || call.created_at), "yyyy-MM-dd") >=
+          format(startDate!, "yyyy-MM-dd") &&
+          format(new Date(call.received_at || call.created_at), "yyyy-MM-dd") <=
+            format(endDate!, "yyyy-MM-dd")))
+    );
+  });
 
   if (!callLogs) {
     <p>Fetching Data....</p>;

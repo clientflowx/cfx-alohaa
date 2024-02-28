@@ -4,7 +4,7 @@ interface CallDurationType {
   agent: string;
 }
 interface CallResponseType {
-  [key: string]: string | undefined;
+  [key: string]: string;
   // Call duration is number type :- to fix
 }
 interface LocationDataType {

@@ -3,7 +3,9 @@ import CallByStatus from "./call-by-status";
 import CallLogsTable from "./call-logs";
 import TopAgents from "./top-agents";
 import { CallDurationType, CallResponseType } from "./types";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler } from "react";
+import { RangeKeyDict } from "react-date-range";
+import Filters from "./filters";
 
 const CallMetrics: React.FC<{
   callDuration: CallDurationType[];
@@ -11,19 +13,63 @@ const CallMetrics: React.FC<{
   type: string | null;
   loading: boolean;
   nameFilter: string;
+  statusFilter: string;
+  minDurationFilter: number;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
   setNameFilter: React.Dispatch<React.SetStateAction<string>>;
+  setStatusFilter: React.Dispatch<React.SetStateAction<string>>;
+  setMinDurationFilter: React.Dispatch<React.SetStateAction<number>>;
+  setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 }> = ({
   callDuration,
   callResponseData,
   type,
   loading,
   nameFilter,
+  statusFilter,
+  minDurationFilter,
+  startDate,
+  endDate,
   setNameFilter,
+  setStatusFilter,
+  setMinDurationFilter,
+  setStartDate,
+  setEndDate,
 }) => {
   const agentList = new Set(callDuration?.map((data) => data?.agent));
 
-  const handleFilterUpdate: ChangeEventHandler<HTMLSelectElement> = (e) => {
+  const selectionRange = {
+    startDate,
+    endDate,
+    key: "selection",
+  };
+
+  const statusArr = [
+    { text: "Answered", key: "answered" },
+    { text: "Not answered", key: "not_answered" },
+  ];
+
+  const handleSelect = (date: RangeKeyDict) => {
+    setStartDate(date.selection.startDate);
+    setEndDate(date.selection.endDate);
+  };
+
+  const handleNameFilterUpdate: ChangeEventHandler<HTMLSelectElement> = (e) => {
     setNameFilter(e.target.value);
+  };
+
+  const handleStatusFilterUpdate: ChangeEventHandler<HTMLSelectElement> = (
+    e
+  ) => {
+    setStatusFilter(e.target.value.toLowerCase());
+  };
+
+  const handleMinDurationFilterUpdate: ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    setMinDurationFilter(+e.target.value);
   };
 
   return loading ? (
@@ -31,32 +77,39 @@ const CallMetrics: React.FC<{
   ) : (
     <>
       <div className="mt-6 px-6 py-4 bg-[#f9fafb]">
-        <select
-          onChange={handleFilterUpdate}
-          id="countries"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-4"
-        >
-          <option value="all" selected>
-            Choose a name
-          </option>
-          {Array.from(agentList)?.map((data, idx) => (
-            <option key={`${data}-${idx}`} value={data}>
-              {data}
-            </option>
-          ))}
-        </select>
+        <Filters
+          handleNameFilterUpdate={handleNameFilterUpdate}
+          agentList={agentList}
+          handleStatusFilterUpdate={handleStatusFilterUpdate}
+          statusArr={statusArr}
+          handleMinDurationFilterUpdate={handleMinDurationFilterUpdate}
+          selectionRange={selectionRange}
+          handleSelect={handleSelect}
+        />
         {callResponseData.length === 0 ? (
           <h2>No data available</h2>
         ) : (
           <>
             <CallByStatus
               nameFilter={nameFilter}
+              statusFilter={statusFilter}
+              minDurationFilter={minDurationFilter}
               type={type}
               callDuration={callDuration}
             />
-            <TopAgents nameFilter={nameFilter} callDuration={callDuration} />
+            <TopAgents
+              type={type}
+              nameFilter={nameFilter}
+              minDurationFilter={minDurationFilter}
+              callDuration={callDuration}
+            />
             <CallLogsTable
               nameFilter={nameFilter}
+              statusFilter={statusFilter}
+              minDurationFilter={minDurationFilter}
+              startDate={startDate}
+              endDate={endDate}
+              type={type}
               callResponseData={callResponseData}
             />
           </>

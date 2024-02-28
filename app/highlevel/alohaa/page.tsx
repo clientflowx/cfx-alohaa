@@ -118,7 +118,7 @@ const Alloha = () => {
   }, []);
 
   return (
-    <div className="w-[400px] rounded overflow-hidden shadow-lg p-5 md:mb-4 sm:mb-4 lg:mb-0">
+    <div className="w-[400px] overflow-hidden p-5 md:mb-4 sm:mb-4 lg:mb-0">
       {(showError || showSuccess) && (
         <Alert
           type={showError ? "error" : "success"}
@@ -126,7 +126,8 @@ const Alloha = () => {
         />
       )}
 
-      <div className=" text-lg mb-2"> Alohaa</div>
+      {/* <div className=" text-lg mb-2"> Alohaa</div> */}
+      <img src="/alohaa-icon.svg" className="mb-4" />
 
       <input
         type="text"
@@ -162,8 +163,7 @@ const Alloha = () => {
       />
       <button
         type="submit"
-        onClick={handleAccessNowBtn}
-        className={`mt-4  border border-transparent focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
+        className={`mt-4 cursor-default select-none border border-transparent focus:outline-none font-medium 
         rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${
           isConnected
             ? "bg-[#37ca411a] text-[#37ca37] "
@@ -172,13 +172,22 @@ const Alloha = () => {
       >
         {isConnected ? "Connected" : "Connect"}
       </button>
-      <button
-        type="submit"
-        onClick={handleSubmit}
-        className="text-[#38A0DB] mt-4 border border-[#38A0DB] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-4 py-2 text-center "
-      >
-        Manage
-      </button>
+      <div className="flex">
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="text-[#38A0DB] mr-2 mt-4 border border-[#38A0DB] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-4 py-2 text-center "
+        >
+          Update
+        </button>
+        <button
+          type="submit"
+          onClick={handleAccessNowBtn}
+          className="text-[#38A0DB] mt-4 border border-[#38A0DB] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-4 py-2 text-center "
+        >
+          Manage
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { convertStoMs } from "@/utils";
+import { convertStoMs, parseTimeStringInS } from "@/utils";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -34,7 +34,9 @@ interface agentMapType {
 const TopAgents: React.FC<{
   callDuration: CallDurationType[];
   nameFilter: string;
-}> = ({ callDuration, nameFilter }) => {
+  type: string | null;
+  minDurationFilter: number;
+}> = ({ callDuration, nameFilter, minDurationFilter, type }) => {
   const agentMap: agentMapType = {};
 
   callDuration.forEach((call: CallDurationType) => {
@@ -65,12 +67,8 @@ const TopAgents: React.FC<{
       agentMap[agentName] = agentObj;
       if (typeof call.duration === "string") {
         let duration = call.duration.length === 0 ? "00:00:00" : call.duration;
-        const callDurationArr = duration.split(":");
-        let seconds = callDurationArr[2];
-        let minutes = callDurationArr[1];
-        let hours = callDurationArr[0];
         let totalCallDuration = 0;
-        totalCallDuration += +hours * 3600 + +minutes * 60 + +seconds;
+        totalCallDuration += parseTimeStringInS(String(duration));
         agentObj.duration = totalCallDuration;
       }
     }
@@ -78,7 +76,9 @@ const TopAgents: React.FC<{
 
   for (let key in agentMap) {
     let durationObj = convertStoMs(+agentMap[key].duration);
-    agentMap[key].duration = `${durationObj.minutes}m:${durationObj.seconds}s`;
+    agentMap[
+      key
+    ].duration = `${durationObj.hours}:${durationObj.minutes}:${durationObj.seconds}`;
   }
 
   const agentEntries = Object.entries(agentMap);
@@ -96,23 +96,18 @@ const TopAgents: React.FC<{
     sortedAgentMap.push(agentObj);
   }
 
-  const callLabels =
-    nameFilter === "all"
-      ? sortedAgentMap.map((agent) => {
-          return agent?.agentName;
-        })
-      : sortedAgentMap.map((agent) => {
-          return agent?.agentName === nameFilter ? agent?.agentName : "";
-        });
+  const filteredAgentMap = sortedAgentMap.filter((call) => {
+    let parsedDuration = parseTimeStringInS(String(call.duration));
 
-  const callData =
-    nameFilter === "all"
-      ? sortedAgentMap.map((agent) => {
-          return agent?.totalCall;
-        })
-      : sortedAgentMap.map((agent) => {
-          return agent?.agentName === nameFilter ? agent?.totalCall : "";
-        });
+    return (
+      (nameFilter === "all" || call.agentName === nameFilter) &&
+      (minDurationFilter === 0 || +parsedDuration >= minDurationFilter)
+    );
+  });
+
+  const callLabels = filteredAgentMap.map((el) => el.agentName);
+
+  const callData = filteredAgentMap.map((el) => el.totalCall);
 
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
 
@@ -167,31 +162,16 @@ const TopAgents: React.FC<{
                 </tr>
               </thead>
               <tbody>
-                {nameFilter === "all" ? (
-                  sortedAgentMap.map((log, index) => (
-                    <tr
-                      key={`agent-${index}`}
-                      className="border-t border-bg-gray-200 hover:bg-gray-100"
-                    >
-                      <td className="py-4 text-center">{log?.agentName}</td>
-                      <td className="pt-4 text-center">{log?.totalCall}</td>
-                      <td className="pt-4 text-center">{log?.duration}</td>
-                    </tr>
-                  ))
-                ) : (
+                {filteredAgentMap.map((log, index) => (
                   <tr
-                    key={nameFilter}
+                    key={`agent-${index}`}
                     className="border-t border-bg-gray-200 hover:bg-gray-100"
                   >
-                    <td className="py-4 text-center">{nameFilter}</td>
-                    <td className="pt-4 text-center">
-                      {agentMap[nameFilter]?.totalCall}
-                    </td>
-                    <td className="pt-4 text-center">
-                      {agentMap[nameFilter]?.duration}
-                    </td>
+                    <td className="py-4 text-center">{log?.agentName}</td>
+                    <td className="pt-4 text-center">{log?.totalCall}</td>
+                    <td className="pt-4 text-center">{log?.duration}</td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>

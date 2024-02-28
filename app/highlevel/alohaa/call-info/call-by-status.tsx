@@ -1,57 +1,53 @@
 "use client";
 
-import { convertStoMs } from "@/utils";
+import { convertStoMs, parseTimeStringInS } from "@/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { CallDurationType } from "./types";
-import { useEffect, useState } from "react";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const CallByStatus: React.FC<{
   callDuration: CallDurationType[];
   type: string | null;
   nameFilter: string;
-}> = ({ callDuration, type, nameFilter }) => {
+  statusFilter: string;
+  minDurationFilter: number;
+}> = ({ callDuration, type, nameFilter, statusFilter, minDurationFilter }) => {
   const callLabels = ["Answered", "Unanswered"];
   const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
 
-  const allCalls =
-    nameFilter !== "all"
-      ? callDuration.filter(
-          (call: CallDurationType) => call.agent === nameFilter
-        )
-      : callDuration;
+  const filteredCalls = callDuration.filter((call) => {
+    let parsedDuration =
+      type === "INCOMING"
+        ? parseTimeStringInS(String(call.duration))
+        : call.duration;
 
-  const answeredCalls =
-    nameFilter !== "all"
-      ? callDuration
-          ?.filter(
-            (call: CallDurationType) => call.status.toLowerCase() === "answered"
-          )
-          .filter((call: CallDurationType) => call.agent === nameFilter)
-      : callDuration?.filter(
-          (call: CallDurationType) => call.status.toLowerCase() === "answered"
-        );
+    return (
+      (nameFilter === "all" || call.agent === nameFilter) &&
+      (statusFilter === "all" || call.status.toLowerCase() === statusFilter) &&
+      (minDurationFilter === 0 || +parsedDuration >= minDurationFilter)
+    );
+  });
+
+  const answeredCalls = filteredCalls.filter(
+    (call) => call.status.toLowerCase() === "answered"
+  );
 
   const numAnsweredCalls = answeredCalls.length;
-  const numUnAnsweredCalls = allCalls.length - answeredCalls.length;
+  const numUnAnsweredCalls = filteredCalls.length - answeredCalls.length;
   let totalCallDuration = 0;
 
   answeredCalls?.forEach((call: CallDurationType) => {
     if (type === "INCOMING" && typeof call.duration === "string") {
-      const callDurationArr = call.duration.split(":");
-      let seconds = callDurationArr[2];
-      let minutes = callDurationArr[1];
-      let hours = callDurationArr[0];
-      totalCallDuration += +hours * 3600 + +minutes * 60 + +seconds;
+      totalCallDuration += parseTimeStringInS(String(call.duration));
     } else totalCallDuration += +call.duration;
-
-    return totalCallDuration;
   });
 
-  const avgCallDuration = convertStoMs(
-    totalCallDuration / answeredCalls.length
-  );
+  const avgCallDuration =
+    answeredCalls.length === 0
+      ? convertStoMs(0)
+      : convertStoMs(totalCallDuration / answeredCalls.length);
+
   let totalCallDurationObj = convertStoMs(totalCallDuration);
   const callData = [numAnsweredCalls, numUnAnsweredCalls];
   const data = {

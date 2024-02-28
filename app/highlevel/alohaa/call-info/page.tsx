@@ -1,5 +1,6 @@
 "use client";
-import Loader from "@/components/Loader";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import { apiUrl } from "@/config";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -35,6 +36,11 @@ const CallInfo = () => {
   const [callDuration, setCallDuration] = useState<CallDurationType[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>("INCOMING");
   const [nameFilter, setNameFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [minDurationFilter, setMinDurationFilter] = useState<number>(0);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
   // fetch call info of location
   const fetchCallsInfo = async (locationId: string | null) => {
     try {
@@ -91,6 +97,10 @@ const CallInfo = () => {
     const currentTab = (e.target as HTMLSpanElement).getAttribute("data-value");
     setActiveTab(currentTab);
     setNameFilter("all");
+    setMinDurationFilter(0);
+    setStatusFilter("all");
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   useEffect(() => {
@@ -111,7 +121,9 @@ const CallInfo = () => {
             key={tabs[tab].text}
             onClick={handleTabSwitch}
             className={`inline-block p-4 border-b-2 rounded-t-lg ${
-              tab === activeTab ? "border-[#006CEB]" : "border-transparent"
+              tab === activeTab
+                ? "border-[#006CEB] cursor-default"
+                : "border-transparent cursor-pointer"
             }`}
             data-value={tabs[tab].key}
           >
@@ -121,7 +133,15 @@ const CallInfo = () => {
       </div>
       <CallMetrics
         nameFilter={nameFilter}
+        statusFilter={statusFilter}
+        minDurationFilter={minDurationFilter}
+        startDate={startDate}
+        endDate={endDate}
         setNameFilter={setNameFilter}
+        setStatusFilter={setStatusFilter}
+        setMinDurationFilter={setMinDurationFilter}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
         callDuration={callDuration}
         type={activeTab}
         loading={loader}
