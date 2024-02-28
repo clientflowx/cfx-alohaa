@@ -41,7 +41,7 @@ const Filters: React.FC<{
         className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
       >
         <option value="all" selected>
-          Choose a name
+          Select name
         </option>
         {Array.from(agentList)?.map((data, idx) => (
           <option key={`${data}-${idx}`} value={data}>
@@ -56,7 +56,7 @@ const Filters: React.FC<{
         className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
       >
         <option value="all" selected>
-          Choose call status
+          Select call status
         </option>
         {statusArr?.map((data, idx) => (
           <option key={`${data.key}-${idx}`} value={data.key}>
