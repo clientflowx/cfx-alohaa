@@ -13,10 +13,14 @@ import { AlohaaAccType } from "../call-info/types";
 
 const AllohaAdmin = () => {
   const [subAccounts, setSubAccounts] = useState<AlohaaAccType[]>([]);
-  const alertMsg = React.useRef("");
-  const [allohaAccounts, setAllohaAccounts] = useState([]);
-  const [showError, setShowError] = React.useState(false);
-  const [showSuccess, setShowSuccess] = React.useState(false);
+  const alertMsg = React.useRef<string>("");
+  const [allohaAccounts, setAllohaAccounts] = useState<
+    {
+      [key: string]: string;
+    }[]
+  >([]);
+  const [showError, setShowError] = React.useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = React.useState<boolean>(false);
 
   const [value, setValue] = useState<AlohaaAccType | null>(null);
 
