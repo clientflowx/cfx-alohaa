@@ -13,4 +13,16 @@ interface LocationDataType {
   didNumbers: string;
   callerNumbers: string;
 }
-export type { LocationDataType, CallDurationType, CallResponseType };
+
+type AlohaaAccType = {
+  key: string;
+  name: string;
+  id: string;
+};
+
+export type {
+  LocationDataType,
+  CallDurationType,
+  CallResponseType,
+  AlohaaAccType,
+};
