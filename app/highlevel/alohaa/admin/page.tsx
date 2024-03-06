@@ -23,6 +23,7 @@ const AllohaAdmin = () => {
   const [showSuccess, setShowSuccess] = React.useState<boolean>(false);
 
   const [value, setValue] = useState<AlohaaAccType | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const createAllohaUser = async () => {
     if (!value) {
@@ -40,10 +41,11 @@ const AllohaAdmin = () => {
       });
 
       if (data?.data?.success) {
-        alertMsg.current = "Request Success";
+        alertMsg.current = "Alohaa access granted";
         fetchAllohaAccounts();
         setShowSuccess(true);
         setValue(null);
+        setInputValue("");
         setTimeout(() => {
           setShowSuccess(false);
         }, 5000);
@@ -76,10 +78,11 @@ const AllohaAdmin = () => {
       });
 
       if (data?.data?.success) {
-        alertMsg.current = "Request Success";
+        alertMsg.current = "Alohaa access revoked";
         fetchAllohaAccounts();
         setShowSuccess(true);
         setValue(null);
+        setInputValue("");
         setTimeout(() => {
           setShowSuccess(false);
         }, 5000);
@@ -158,7 +161,7 @@ const AllohaAdmin = () => {
         />
       </div>
       <h2 className="text-center text-2xl mt-4">CRM X Alohaa Admin Section</h2>
-      <div className="flex lg:flex-row md:flex-col sm:flex-col p-4 mt-6 justify-between">
+      <div className="flex min-h-[340px] lg:flex-row md:flex-col sm:flex-col p-4 mt-6 justify-between">
         <div
           className="lg:w-[340px] flex md:w-full md:flex-row lg:justify-start sm:w-full sm:w-full sm:flex-row sm:justify-center 
         lg:flex-col lg:mr-8 md:mr-0 rounded overflow-hidden px-6 py-4"
@@ -167,7 +170,12 @@ const AllohaAdmin = () => {
           <div className="text-xs mb-2 text-slate-400">
             {value?.name && <p>Current Location: {value.name}</p>}
           </div>
-          <AutoCompleteDD setCurrentOption={setValue} dataList={subAccounts} />
+          <AutoCompleteDD
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            setCurrentOption={setValue}
+            dataList={subAccounts}
+          />
           <button
             type="submit"
             onClick={createAllohaUser}

@@ -4,14 +4,17 @@ import React, { useEffect, useState } from "react";
 interface AutoCompleteDDProps {
   dataList: AlohaaAccType[];
   setCurrentOption: React.Dispatch<React.SetStateAction<AlohaaAccType | null>>;
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AutoCompleteDD: React.FC<AutoCompleteDDProps> = ({
   dataList: data,
   setCurrentOption,
+  inputValue,
+  setInputValue,
 }) => {
   const [filteredData, setFilteredData] = useState<AlohaaAccType[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
 
   const handleInputClick:
     | React.MouseEventHandler<HTMLInputElement>
