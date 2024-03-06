@@ -107,7 +107,7 @@ const CallInfo = () => {
     const locationId = new URL(global.window.location.href)?.searchParams.get(
       "locationId"
     );
-    console.log("re rendered");
+
     activeTab !== "INCOMING"
       ? fetchCallsInfo(locationId)
       : fetchIncomingCallsInfo(locationId);
