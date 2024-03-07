@@ -216,7 +216,7 @@ const ManageAccount: React.FC = () => {
                     required
                   />
                   <span className="text-xs text-red-600 mt-2">
-                    * Please Enter DID number with country code.
+                    * Please Enter DID number starting with 91.
                   </span>
                   <input
                     type="tel"
