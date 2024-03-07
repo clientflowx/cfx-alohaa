@@ -38,7 +38,7 @@ const TopAgents: React.FC<{
   minDurationFilter: number;
 }> = ({ callDuration, nameFilter, minDurationFilter, type }) => {
   const agentMap: agentMapType = {};
-
+  let tot = 0;
   callDuration.forEach((call: CallDurationType) => {
     let agentName = call?.agent;
     if (agentMap[agentName]) {
@@ -49,7 +49,6 @@ const TopAgents: React.FC<{
         agentMap[agentName].duration = +currAgentObj.duration + call.duration;
       else {
         const callDurationArr = call.duration.split(":");
-
         let seconds = callDurationArr[2];
         let minutes = callDurationArr[1];
         let hours = callDurationArr[0];

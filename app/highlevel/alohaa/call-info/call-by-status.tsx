@@ -40,7 +40,9 @@ const CallByStatus: React.FC<{
   answeredCalls?.forEach((call: CallDurationType) => {
     if (type === "INCOMING" && typeof call.duration === "string") {
       totalCallDuration += parseTimeStringInS(String(call.duration));
-    } else totalCallDuration += +call.duration;
+    } else {
+      totalCallDuration += +call.duration;
+    }
   });
 
   const avgCallDuration =
@@ -85,8 +87,9 @@ const CallByStatus: React.FC<{
           </div>
           <div className="lg:w-[540px] md:w-[518px] sm:text-xs md:text-sm lg:text-lg mx-auto mt-2 bg-gray-100 p-4 rounded-md">
             Avg. Call Duration: {avgCallDuration.minutes}m:&nbsp;
-            {avgCallDuration.seconds}s | Total Call Duration :
-            {totalCallDurationObj.minutes}m:&nbsp;
+            {avgCallDuration.seconds}s <br /> Total Call Duration:&nbsp;
+            {totalCallDurationObj.hours}h:&nbsp;{totalCallDurationObj.minutes}
+            m:&nbsp;
             {totalCallDurationObj.seconds}s
           </div>
         </div>
