@@ -33,6 +33,7 @@ const Filters: React.FC<{
   const handleDateSelector = () => {
     setShowDateSelector(!showDateSelector);
   };
+
   return (
     <div className="flex items-center mb-4">
       <select

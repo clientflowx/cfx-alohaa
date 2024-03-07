@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { apiUrl } from "@/config";
 import axios from "axios";
 import Alert from "@/components/Alert";
 import { Phone } from "@/svg/phone";
 import { User } from "@/svg/user";
+import DeleteIcon from "@/svg/delete";
+import Svg from "@/components/Svg";
 
 interface locationDataIF {
   didNumbers: string | null;
@@ -36,20 +38,29 @@ const ManageAccount: React.FC = () => {
     null
   );
   const alertMsg = useRef("");
-  // const didNumberRefMakeCall = useRef('918069738302'); // Create a ref for Make a Call DID number
-  // const callerNumberRefMakeCall = useRef(null); // Create a ref for Make a Call Caller number
-  // const receiverNumberRefMakeCall = useRef(null) // Receiver Number Ref
   const addUserEmailRef = useRef<HTMLInputElement | null>(null); // add new user email
   const addUserDidMobileNumberRef = useRef<HTMLInputElement | null>(null); //add new user did mobile number
   const addUserCallerMobileNumberRef = useRef<HTMLInputElement | null>(null); // add new user caller mobile number
 
-  const handleAddUser = async () => {
+  const handleAddUser: FormEventHandler<HTMLFormElement> | undefined = async (
+    e
+  ) => {
+    e.preventDefault();
     try {
       const userEmail = addUserEmailRef?.current?.value;
       const userDidMobile = addUserDidMobileNumberRef?.current?.value;
       const userCallerMobile = addUserCallerMobileNumberRef?.current?.value;
       const locationId = currentLocationId;
-
+      if (userCallerMobile?.startsWith("+91")) {
+        alertMsg.current = "Caller number should not start with country code.";
+        setShowError(true);
+        return;
+      }
+      if (userCallerMobile?.length != 10) {
+        alertMsg.current = "Incorrect caller mobile number";
+        setShowError(true);
+        return;
+      }
       if (
         !currentLocationId ||
         !userEmail ||
@@ -86,16 +97,53 @@ const ManageAccount: React.FC = () => {
     }
   };
 
+  const handleDeleteUser = async (item: {
+    email: string;
+    didNumber: string | null;
+    callerNumber: string | null;
+  }) => {
+    const { email } = item;
+    try {
+      if (!currentLocationId || !email) {
+        alertMsg.current = "Missing Payload";
+        setShowError(true);
+        setTimeout(() => {
+          setShowError(false);
+        }, 3000);
+        return;
+      }
+
+      await axios.post(`${apiUrl}/api/crmalloha/remove-alloha-user`, {
+        locationId: currentLocationId,
+        userEmail: email,
+      });
+      alertMsg.current = "User removed Successfully";
+      setShowSuccess(true);
+      fetchUserInfo(currentLocationId);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    } catch (err: any) {
+      console.log(err);
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
+      alertMsg.current = err?.response?.data?.error || "Some Error Occured";
+    }
+  };
+
   const fetchUserInfo = async (locationId: string | null) => {
     try {
       const { data } = await axios.get(
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
       );
-      if (data?.data?.success) {
-        if (data?.data?.data?.apiKey) {
-          allohaApiKeyRef.current = data?.data?.data?.apiKey;
-          emailRef.current = data?.data?.data?.email;
-          setLocationData(data?.data?.data);
+
+      if (data?.success) {
+        if (data?.data?.data?.data?.apiKey) {
+          allohaApiKeyRef.current = data?.data?.data?.data?.apiKey;
+          emailRef.current = data?.data?.data?.data?.email;
+          setLocationData(data?.data?.data?.data);
         } else {
           alertMsg.current = "Please Add Your Api Key";
           setShowError(true);
@@ -148,38 +196,49 @@ const ManageAccount: React.FC = () => {
                 <div className=" text-lg"> Add Users</div>
                 <User />
               </div>
-              <div>
-                <input
-                  type="text"
-                  id="first_name"
-                  className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Enter Email"
-                  ref={addUserEmailRef}
-                  required
-                />
-                <input
-                  type="text"
-                  id="first_name"
-                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Enter DID Number"
-                  ref={addUserDidMobileNumberRef}
-                  required
-                />
-                <input
-                  type="text"
-                  id="first_name"
-                  className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Enter Caller Number"
-                  ref={addUserCallerMobileNumberRef}
-                  required
-                />
-                <button
-                  type="submit"
-                  onClick={handleAddUser}
-                  className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                >
-                  Add Now
-                </button>
+              <div className="flex flex-col">
+                <form onSubmit={handleAddUser}>
+                  <input
+                    type="email"
+                    id="first_name"
+                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    placeholder="Enter Email"
+                    ref={addUserEmailRef}
+                    required
+                  />
+                  <input
+                    type="tel"
+                    id="first_name"
+                    className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    placeholder="Enter DID Number"
+                    pattern="^91[6789]{1}[0-9]{9}"
+                    ref={addUserDidMobileNumberRef}
+                    required
+                  />
+                  <span className="text-xs text-red-600 mt-2">
+                    * Please Enter DID number with country code.
+                  </span>
+                  <input
+                    type="tel"
+                    id="first_name"
+                    className="border border-gray-300 text-gray-900 mt-2 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                    placeholder="Enter Caller Number"
+                    maxLength={10}
+                    pattern="[6789]{1}[0-9]{9}"
+                    ref={addUserCallerMobileNumberRef}
+                    required
+                  />
+                  <span className="text-xs text-red-600 mt-2">
+                    * Please Enter Caller number without country code.
+                  </span>
+
+                  <button
+                    type="submit"
+                    className="text-blue-800 mt-4 bg-white border-2 border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                  >
+                    Add Now
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -203,12 +262,22 @@ const ManageAccount: React.FC = () => {
               {locationData?.users?.map((item, idx) => {
                 return (
                   <tr
-                    className="bg-white border-b odd:bg-gray-100"
+                    className="bg-white border-b odd:bg-gray-100 "
                     key={`item-${idx}`}
                   >
                     <td className="px-6 py-4">{item?.email}</td>
                     <td className="px-6 py-4">{item?.didNumber}</td>
                     <td className="px-6 py-4">{item?.callerNumber}</td>
+                    <td className="px-6 py-4">
+                      <Svg
+                        onClick={() => handleDeleteUser(item)}
+                        icon={DeleteIcon}
+                        width={30}
+                        height={30}
+                        className="hover:fill-[#ee4c45] hover:stroke-[#ee4c45] cursor-pointer"
+                        viewBox="0 0 64 64"
+                      />
+                    </td>
                   </tr>
                 );
               })}

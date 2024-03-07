@@ -76,9 +76,9 @@ const Alloha = () => {
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
       );
 
-      if (data?.data?.success) {
-        if (data?.data?.data?.apiKey) {
-          setLocationData(data?.data?.data);
+      if (data?.success) {
+        if (data?.data?.data?.data?.apiKey) {
+          setLocationData(data?.data?.data?.data);
         } else {
           alertMsg.current = "Please Add Your API Key";
           setShowError(true);

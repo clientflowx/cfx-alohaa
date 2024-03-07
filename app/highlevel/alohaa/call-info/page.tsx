@@ -73,7 +73,7 @@ const CallInfo = () => {
         `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
       );
 
-      const callLogsData = data?.data?.data?.callDetails || [];
+      const callLogsData = data?.data?.data?.data?.callDetails || [];
 
       const callDurationData = callLogsData?.map(
         (callLog: CallResponseType) => {
