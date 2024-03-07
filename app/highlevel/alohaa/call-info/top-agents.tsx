@@ -38,17 +38,21 @@ const TopAgents: React.FC<{
   minDurationFilter: number;
 }> = ({ callDuration, nameFilter, minDurationFilter, type }) => {
   const agentMap: agentMapType = {};
-  let tot = 0;
+
   callDuration.forEach((call: CallDurationType) => {
     let agentName = call?.agent;
+
     if (agentMap[agentName]) {
-      let currAgentObj = agentMap[agentName];
+      let currAgentObj = { ...agentMap[agentName] };
       agentMap[agentName].totalCall = currAgentObj.totalCall + 1;
 
       if (typeof call.duration !== "string")
         agentMap[agentName].duration = +currAgentObj.duration + call.duration;
       else {
-        const callDurationArr = call.duration.split(":");
+        const callDurationArr =
+          call.duration.length === 0
+            ? "00:00:00".split(":")
+            : call.duration.split(":");
         let seconds = callDurationArr[2];
         let minutes = callDurationArr[1];
         let hours = callDurationArr[0];
@@ -59,17 +63,19 @@ const TopAgents: React.FC<{
         agentMap[agentName].duration = newDuration;
       }
     } else {
-      const agentObj = {
+      let agentObj = {
         totalCall: 1,
         duration: call.duration,
       };
-      agentMap[agentName] = agentObj;
+
       if (typeof call.duration === "string") {
         let duration = call.duration.length === 0 ? "00:00:00" : call.duration;
         let totalCallDuration = 0;
         totalCallDuration += parseTimeStringInS(String(duration));
         agentObj.duration = totalCallDuration;
       }
+
+      agentMap[agentName] = { ...agentObj };
     }
   });
 
@@ -108,7 +114,7 @@ const TopAgents: React.FC<{
 
   const callData = filteredAgentMap.map((el) => el.totalCall);
 
-  const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
+  const callBg = ["rgba(52,211,153)", "rgba(255, 99, 132)"];
 
   const columns = ["Agents", "Total Calls", "Total Duration"];
   const data = {
@@ -161,16 +167,18 @@ const TopAgents: React.FC<{
                 </tr>
               </thead>
               <tbody>
-                {filteredAgentMap.map((log, index) => (
-                  <tr
-                    key={`agent-${index}`}
-                    className="border-t border-bg-gray-200 hover:bg-gray-100"
-                  >
-                    <td className="py-4 text-center">{log?.agentName}</td>
-                    <td className="pt-4 text-center">{log?.totalCall}</td>
-                    <td className="pt-4 text-center">{log?.duration}</td>
-                  </tr>
-                ))}
+                {filteredAgentMap.map((log, index) => {
+                  return (
+                    <tr
+                      key={`agent-${index}`}
+                      className="border-t border-bg-gray-200 hover:bg-gray-100"
+                    >
+                      <td className="py-4 text-center">{log?.agentName}</td>
+                      <td className="pt-4 text-center">{log?.totalCall}</td>
+                      <td className="pt-4 text-center">{log?.duration}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -14,7 +14,7 @@ const CallByStatus: React.FC<{
   minDurationFilter: number;
 }> = ({ callDuration, type, nameFilter, statusFilter, minDurationFilter }) => {
   const callLabels = ["Answered", "Unanswered"];
-  const callBg = ["rgba(255, 99, 132)", "rgba(54, 162, 235)"];
+  const callBg = ["rgba(52,211,153)", "rgba(255, 99, 132)"];
 
   const filteredCalls = callDuration.filter((call) => {
     let parsedDuration =
@@ -56,7 +56,7 @@ const CallByStatus: React.FC<{
     labels: callLabels,
     datasets: [
       {
-        label: " # of Votes",
+        label: "No. of calls",
         data: callData,
         backgroundColor: callBg,
         borderWidth: 5,
