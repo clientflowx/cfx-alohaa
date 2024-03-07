@@ -128,7 +128,19 @@ const CallLogsTable: React.FC<{
                         } else {
                           return (
                             <td className="text-center" key={column?.key}>
-                              {log[column?.key]}
+                              {column?.key === "call_status" ? (
+                                log[column?.key] === "Answered" ? (
+                                  <span className="text-[#35d399]">
+                                    Answered
+                                  </span>
+                                ) : (
+                                  <span className="text-[#ff6483]">
+                                    Not Answered
+                                  </span>
+                                )
+                              ) : (
+                                log[column?.key]
+                              )}
                             </td>
                           );
                         }
@@ -170,11 +182,19 @@ const CallLogsTable: React.FC<{
                         } else {
                           return (
                             <td className="text-center" key={column?.key}>
-                              {column?.key === "status"
-                                ? log[column?.key] === "not_answered"
-                                  ? "Not Answered"
-                                  : "Answered"
-                                : log[column?.key]}
+                              {column?.key === "status" ? (
+                                log[column?.key] === "answered" ? (
+                                  <span className="text-[#35d399]">
+                                    Answered
+                                  </span>
+                                ) : (
+                                  <span className="text-[#ff6483]">
+                                    Not Answered
+                                  </span>
+                                )
+                              ) : (
+                                log[column?.key]
+                              )}
                             </td>
                           );
                         }
