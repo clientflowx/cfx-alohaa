@@ -1,6 +1,7 @@
 "use client";
 
-import { CalenderIcon } from "@/svg/calender";
+import Svg from "@/components/Svg";
+import CalenderIcon from "@/svg/calender";
 import { ChangeEventHandler, useState } from "react";
 import { DateRangePicker, RangeKeyDict } from "react-date-range";
 
@@ -74,7 +75,7 @@ const Filters: React.FC<{
       />
       <div className="relative">
         <span className="cursor-pointer" onClick={handleDateSelector}>
-          <CalenderIcon />
+          <Svg icon={CalenderIcon} width={30} height={30} viewBox="0 0 64 64" />
         </span>
         {showDateSelector && (
           <DateRangePicker
