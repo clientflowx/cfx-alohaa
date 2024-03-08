@@ -215,8 +215,9 @@ const ManageAccount: React.FC = () => {
                     ref={addUserDidMobileNumberRef}
                     required
                   />
-                  <span className="text-xs text-red-600 mt-2">
-                    * Please Enter DID number starting with 91.
+                  <span className="text-xs  mt-2">
+                    * Please Enter DID number starting
+                    <span className="font-bold text-green-600"> with 91</span>.
                   </span>
                   <input
                     type="tel"
@@ -228,8 +229,9 @@ const ManageAccount: React.FC = () => {
                     ref={addUserCallerMobileNumberRef}
                     required
                   />
-                  <span className="text-xs text-red-600 mt-2">
-                    * Please Enter Caller number without country code.
+                  <span className="text-xs  mt-2">
+                    * Please Enter Caller number
+                    <span className="font-bold text-red-600"> without 91</span>.
                   </span>
 
                   <button
