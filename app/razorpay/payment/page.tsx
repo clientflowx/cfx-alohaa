@@ -60,7 +60,7 @@ const PaymentModal = () => {
         },
       } = paymentData;
 
-      const paymentLink = `http://localhost:3000/razorpay/paylink/${paymentId}`;
+      const paymentLink = `http://staging--integration-cfx.netlify.app/razorpay/paylink/${paymentId}`;
       console.log(paymentLink);
       navigator.clipboard.writeText(paymentLink);
 
@@ -134,7 +134,7 @@ const PaymentModal = () => {
           <div className="mt-6 text-[#607179] ">
             {inputFields.map((item, ind) => {
               return (
-                <div className="mb-6">
+                <div className="mb-6" key={`item-name-${ind}`}>
                   <div className="grid grid-cols-12 items-center">
                     <div className="col-span-7">Item name</div>
                     <div className="col-span-4 pl-2">Item price</div>
