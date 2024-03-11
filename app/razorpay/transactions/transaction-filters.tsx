@@ -77,9 +77,7 @@ const TransactionFilters: React.FC<{
           id="countries"
           className="mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
         >
-          <option value="all" selected>
-            Select status
-          </option>
+          <option value="all">Select status</option>
           {statusArr?.map((data, idx) => (
             <option key={`${data}-${idx}`} value={data}>
               {data}
@@ -92,9 +90,7 @@ const TransactionFilters: React.FC<{
           id="countries"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
         >
-          <option value="all" selected>
-            Select payment mode
-          </option>
+          <option value="all">Select payment mode</option>
           {["Razorpay", "Instamojo", "Stripe"].map((data, idx) => (
             <option key={`${data}-${idx}`} value={data}>
               {data}

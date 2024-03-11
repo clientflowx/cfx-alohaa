@@ -1,9 +1,13 @@
 "use client";
+import Alert from "@/components/Alert";
 import Svg from "@/components/Svg";
+import { apiUrl } from "@/config";
 import CrossIcon from "@/svg/cross";
 import eye from "@/svg/eye";
 import PlusIcon from "@/svg/plus";
-import React, { ChangeEvent, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import React, { ChangeEvent, useRef, useState } from "react";
 
 interface InputField {
   [key: string]: string | number;
@@ -16,7 +20,64 @@ const PaymentModal = () => {
       itemPrice: 0,
     },
   ]);
+  const [totalAmount, setTotalAmount] = useState<number>(parseFloat("0"));
+  const [showError, setShowError] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const alertMsg = useRef("");
 
+  const generatePaymentLink:
+    | React.FormEventHandler<HTMLFormElement>
+    | undefined = async (e) => {
+    try {
+      e.preventDefault();
+      const itemDescription = inputFields
+        .map((field) => field.itemName)
+        .join("_");
+
+      const paymentData = await axios.post(
+        `${apiUrl}/api/razorpay/razorpay-link-generate`,
+        {
+          key_id: "rzp_live_9oKCM6CsUXuHRp",
+          key_secret: "l2h7EP1sYtIT5dt8D15fiI3d",
+          locationId: "1",
+          amount: totalAmount,
+          currency: "INR",
+          description: itemDescription,
+          customer: {
+            name: "Gaurav Kumar",
+            email: "gaurav.kumar@example.com",
+            contact: "+919000090000",
+          },
+          notes: {
+            policy_name: "Jeevan Bima",
+          },
+        }
+      );
+
+      const {
+        data: {
+          data: { paymentId },
+        },
+      } = paymentData;
+
+      const paymentLink = `http://localhost:3000/razorpay/paylink/${paymentId}`;
+      console.log(paymentLink);
+      navigator.clipboard.writeText(paymentLink);
+
+      alertMsg.current = "Payment link copied";
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    } catch (error) {
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
+      alertMsg.current = "Some Error Occured";
+    }
+  };
   const addMoreFields:
     | React.MouseEventHandler<HTMLDivElement>
     | undefined = () => {
@@ -29,7 +90,15 @@ const PaymentModal = () => {
   ) => {
     const { name, value } = event.currentTarget;
     const updatedInput = [...inputFields];
+
     (updatedInput[index] as InputField)[name] = value;
+    const totalPrice = updatedInput.reduce((acc, curr) => {
+      const parsedPrice =
+        String(curr.itemPrice).length > 0 ? String(curr.itemPrice) : "0";
+      return acc + parseFloat(parsedPrice);
+    }, 0);
+
+    !isNaN(totalPrice) && setTotalAmount(Number(totalPrice.toFixed(2)));
     setInputFields(updatedInput);
   };
 
@@ -40,9 +109,15 @@ const PaymentModal = () => {
       setInputFields(newArray);
     }
   };
-  console.log(inputFields);
+
   return (
     <div className="bg-zinc-400 min-h-screen pt-6">
+      {(showError || showSuccess) && (
+        <Alert
+          type={showError ? "error" : "success"}
+          message={alertMsg?.current}
+        />
+      )}
       <div className="bg-white max-w-[680px] mx-auto mt-6 rounded-lg py-4 px-6">
         <div className="border-b-2 border-[#f2f7fa] pb-4 flex flex-col">
           <span className="mb-2 font-semibold text-[20px]">
@@ -55,7 +130,7 @@ const PaymentModal = () => {
           </span>
         </div>
 
-        <form action="">
+        <form action="" onSubmit={generatePaymentLink}>
           <div className="mt-6 text-[#607179] ">
             {inputFields.map((item, ind) => {
               return (
@@ -84,7 +159,7 @@ const PaymentModal = () => {
                         type="text"
                         name="itemPrice"
                         value={item?.itemPrice}
-                        pattern="[0-9]{0,}"
+                        pattern="[0-9]{0,}[.]?[0-9]{0,}"
                         placeholder="Price"
                         title="Enter valid price"
                         onChange={(event) => handleInputChanges(event, ind)}
@@ -124,7 +199,7 @@ const PaymentModal = () => {
               <div className="col-span-8"></div>
               <div className="col-span-4 border-t-2">
                 <span className="block mt-2 text-[14px]">Total Amount</span>
-                <span className="block font-bold text-lg">₹0.00</span>
+                <span className="block font-bold text-lg">₹{totalAmount}</span>
               </div>
             </div>
 
