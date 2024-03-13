@@ -13,6 +13,7 @@ interface TransactionListType {
 }
 
 const TransactionList = () => {
+  const [currentLocationId, setCurrentLocationId] = useState<string>("1");
   const [transactionList, setTransactionList] = useState<TransactionListType[]>(
     []
   );
@@ -31,42 +32,77 @@ const TransactionList = () => {
     { key: "amount", text: "Amount" },
     { key: "status", text: "Status" },
   ];
+  const currencyMap: { [key: string]: string } = {
+    USD: "$",
+    INR: "₹",
+  };
 
-  const fetchTransactionsData = async () => {
-    const transactionsData = await axios.post(
-      `${apiUrl}/api/razorpay/check-payment-link-status/all`,
-      {
-        key_id: "rzp_live_9oKCM6CsUXuHRp",
-        key_secret: "l2h7EP1sYtIT5dt8D15fiI3d",
+  const fetchTransactionsData = async (locationId: string) => {
+    const rzpTransactionsData = await axios.get(
+      `${apiUrl}/api/razorpay/razorpay-payments/${locationId}`
+    );
+    const crmTransactionsData = await axios.get(
+      `${apiUrl}/api/internal/location-transaction-list/L5KNiAsUDWR56VLxY299` //${locationId}
+    );
+
+    const {
+      data: {
+        data: { data: crmTransactionDetails = [] },
+      },
+    } = crmTransactionsData;
+    console.log(crmTransactionDetails);
+    const newCrmTransactionList: TransactionListType[] = [];
+    crmTransactionDetails.forEach(
+      (transaction: TransactionListType, ind: number) => {
+        const symbol = currencyMap[transaction.currency.toUpperCase()];
+        const obj = {
+          amount: `${symbol}${transaction.amount}`,
+          status: transaction.status,
+          customer: transaction.contactName,
+          date: transaction.updatedAt,
+          source: transaction.entitySourceName,
+          provider: transaction.paymentProviderType,
+        };
+        newCrmTransactionList.push(obj);
       }
     );
 
     const {
       data: {
         data: {
-          status: { payment_links: transactionDetails },
+          invoices: { items: rzpTransactionDetails = [] },
         },
       },
-    } = transactionsData;
+    } = rzpTransactionsData;
+
     const newTransactionList: TransactionListType[] = [];
-    transactionDetails.forEach(
+    rzpTransactionDetails.forEach(
       (transaction: TransactionListType, ind: number) => {
+        const symbol = currencyMap[transaction.currency.toUpperCase()];
         const obj = {
-          amount: `₹${transaction.amount}`,
-          status: ind % 2 === 0 ? "succeeded" : transaction.reminders.status,
-          customer: transaction.customer.name,
-          date: format(transaction.updated_at * 1000, "dd MMM yy"),
-          source: "Invoice",
-          provider: ind % 2 === 0 ? "Razorpay" : "Instamojo",
+          amount: `${symbol}${transaction.amount}`,
+          status: transaction.status,
+          customer: transaction.contact,
+          date: transaction.created_at * 1000,
+          source: "New Invoice",
+          provider: "Razorpay",
         };
         newTransactionList.push(obj);
       }
     );
-    setTransactionList(newTransactionList);
+
+    const allTransactions = [...newTransactionList, ...newCrmTransactionList];
+    allTransactions.sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    setTransactionList(allTransactions);
   };
 
   useEffect(() => {
-    fetchTransactionsData();
+    const locationId =
+      new URL(window.location.href).searchParams.get("locationId") || "1";
+    setCurrentLocationId(locationId);
+    fetchTransactionsData(locationId);
   }, []);
 
   const filteredTransactionList = transactionList?.filter((transaction) => {
