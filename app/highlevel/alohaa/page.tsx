@@ -52,7 +52,7 @@ const Alloha = () => {
         apiKey: allohaApiKey,
         locationId: currentLocationId,
         email: email,
-        callersNumber: callerNumber,
+        callerNumber: callerNumber,
         didNumber: didNumber,
       });
       alertMsg.current = "Details Update Success";
