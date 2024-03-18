@@ -55,6 +55,7 @@ const Alloha = () => {
         callersNumber: callerNumber,
         didNumber: didNumber,
       });
+
       alertMsg.current = "Details Update Success";
       setShowSuccess(true);
       setTimeout(() => {
@@ -113,6 +114,8 @@ const Alloha = () => {
     const locationId = new URL(window.location.href).searchParams.get(
       "locationId"
     );
+    console.log("from the beginning: ", locationId);
+
     setCurrentLocationId(locationId);
     fetchUserInfo(locationId);
   }, []);
@@ -164,11 +167,10 @@ const Alloha = () => {
       <button
         type="submit"
         className={`mt-4 cursor-default select-none border border-transparent focus:outline-none font-medium 
-        rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${
-          isConnected
+        rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${isConnected
             ? "bg-[#37ca411a] text-[#37ca37] "
             : "bg-[#38A0DB] text-white"
-        }`}
+          }`}
       >
         {isConnected ? "Connected" : "Connect"}
       </button>
