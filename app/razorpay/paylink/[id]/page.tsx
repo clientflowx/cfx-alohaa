@@ -4,7 +4,7 @@ import React from "react";
 
 const Paylink: React.FC<{ params: any }> = ({ params }) => {
   const paymentId = params?.id;
-  const paymentLink = `https://razorpay.com/payment-link/${paymentId}`;
+  const paymentLink = `https://invoices.razorpay.com/v1/l/${paymentId}`;
 
   return (
     <div className="w-screen h-screen">

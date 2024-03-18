@@ -42,7 +42,7 @@ const TransactionList = () => {
     const crmInvoicesData = await axios.get(
       `${apiUrl}/api/internal/location-invoices-list/L5KNiAsUDWR56VLxY299` //${locationId}
     );
-    // console.log(rzpInvoicesData);
+
     const {
       data: {
         data: { invoices: crmInvoicesDetails = [] },
@@ -70,7 +70,7 @@ const TransactionList = () => {
         },
       },
     } = rzpInvoicesData;
-    console.log(rzpInvoicesDetails);
+
     const newInvoicesList: InvoicesListType[] = [];
     rzpInvoicesDetails.forEach((invoice: InvoicesListType, ind: number) => {
       const symbol = currencyMap[invoice.currency.toUpperCase()];

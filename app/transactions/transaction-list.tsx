@@ -50,7 +50,7 @@ const TransactionList = () => {
         data: { data: crmTransactionDetails = [] },
       },
     } = crmTransactionsData;
-    console.log(crmTransactionDetails);
+
     const newCrmTransactionList: TransactionListType[] = [];
     crmTransactionDetails.forEach(
       (transaction: TransactionListType, ind: number) => {

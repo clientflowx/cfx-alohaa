@@ -23,6 +23,10 @@ const PaymentModal = () => {
   const [totalAmount, setTotalAmount] = useState<number>(parseFloat("0"));
   const [showError, setShowError] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [invoiceDate, setInvoiceDate] = useState<string>(
+    new Date(Date.now() + 3600 * 1000 * 24).toISOString().substring(0, 10)
+  );
+
   const alertMsg = useRef("");
 
   const generatePaymentLink:
@@ -30,38 +34,36 @@ const PaymentModal = () => {
     | undefined = async (e) => {
     try {
       e.preventDefault();
-      const itemDescription = inputFields
-        .map((field) => field.itemName)
-        .join("_");
+      const invoiceItems = inputFields.map((field) => {
+        return { name: field.itemName, amount: field.itemPrice };
+      });
 
       const paymentData = await axios.post(
-        `${apiUrl}/api/razorpay/razorpay-link-generate`,
+        `${apiUrl}/api/razorpay/razorpay-invoice-link-generate`,
         {
-          key_id: "rzp_live_9oKCM6CsUXuHRp",
-          key_secret: "l2h7EP1sYtIT5dt8D15fiI3d",
           locationId: "1",
           amount: totalAmount,
           currency: "INR",
-          description: itemDescription,
+          line_items: invoiceItems,
           customer: {
             name: "Gaurav Kumar",
             email: "gaurav.kumar@example.com",
             contact: "+919000090000",
           },
-          notes: {
-            policy_name: "Jeevan Bima",
-          },
+          sms_notify: 1,
+          email_notify: 1,
+          expire_by: new Date(invoiceDate).getTime(),
         }
       );
 
       const {
         data: {
-          data: { paymentId },
+          data: { invoiceId },
         },
       } = paymentData;
 
-      const paymentLink = `http://staging--integration-cfx.netlify.app/razorpay/paylink/${paymentId}`;
-      console.log(paymentLink);
+      const paymentLink = `http://staging--integration-cfx.netlify.app/razorpay/paylink/${invoiceId}`;
+
       navigator.clipboard.writeText(paymentLink);
 
       alertMsg.current = "Payment link copied";
@@ -110,6 +112,11 @@ const PaymentModal = () => {
     }
   };
 
+  const handleInvoiceDate:
+    | React.ChangeEventHandler<HTMLInputElement>
+    | undefined = (e) => {
+    setInvoiceDate(e.target.value);
+  };
   return (
     <div className="bg-zinc-400 min-h-screen pt-6">
       {(showError || showSuccess) && (
@@ -211,7 +218,8 @@ const PaymentModal = () => {
                 <input
                   className=" border border-gray-300 px-3 py-1 mt-1 rounded"
                   type="date"
-                  value={new Date().toISOString().substring(0, 10)}
+                  value={invoiceDate}
+                  onChange={handleInvoiceDate}
                   name=""
                   id=""
                 />
