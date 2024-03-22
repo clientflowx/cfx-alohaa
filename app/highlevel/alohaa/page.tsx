@@ -55,6 +55,7 @@ const Alloha = () => {
         callerNumber: callerNumber,
         didNumber: didNumber,
       });
+
       alertMsg.current = "Details Update Success";
       setShowSuccess(true);
       setTimeout(() => {
@@ -65,6 +66,8 @@ const Alloha = () => {
       setTimeout(() => {
         setShowError(false);
       }, 3000);
+      console.log(err);
+
       alertMsg.current = err?.response?.data?.error || "Some Error Occured";
     }
   };
@@ -113,6 +116,8 @@ const Alloha = () => {
     const locationId = new URL(window.location.href).searchParams.get(
       "locationId"
     );
+    console.log("from the beginning: ", locationId);
+
     setCurrentLocationId(locationId);
     fetchUserInfo(locationId);
   }, []);
