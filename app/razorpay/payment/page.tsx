@@ -37,11 +37,13 @@ const PaymentModal = () => {
       const invoiceItems = inputFields.map((field) => {
         return { name: field.itemName, amount: field.itemPrice };
       });
-
+      const locationId = new URL(global.window.location.href)?.searchParams.get(
+        "locationId"
+      );
       const paymentData = await axios.post(
         `${apiUrl}/api/razorpay/razorpay-invoice-link-generate`,
         {
-          locationId: "1",
+          locationId,
           amount: totalAmount,
           currency: "INR",
           line_items: invoiceItems,
@@ -55,23 +57,31 @@ const PaymentModal = () => {
           expire_by: new Date(invoiceDate).getTime(),
         }
       );
+      if (paymentData?.data?.success) {
+        const {
+          data: {
+            data: { invoiceId },
+          },
+        } = paymentData;
 
-      const {
-        data: {
-          data: { invoiceId },
-        },
-      } = paymentData;
+        const paymentLink = `http://staging.integration.clientflowx.com/razorpay/paylink/${invoiceId}`;
 
-      const paymentLink = `http://staging--integration-cfx.netlify.app/razorpay/paylink/${invoiceId}`;
+        navigator.clipboard.writeText(paymentLink);
 
-      navigator.clipboard.writeText(paymentLink);
+        alertMsg.current = "Payment link copied";
 
-      alertMsg.current = "Payment link copied";
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 3000);
+      } else {
+        alertMsg.current = paymentData?.data?.message;
 
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
+        setShowError(true);
+        setTimeout(() => {
+          setShowError(false);
+        }, 3000);
+      }
     } catch (error) {
       setShowError(true);
       setTimeout(() => {
