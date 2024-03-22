@@ -1,5 +1,4 @@
 "use client";
-
 import Alert from "@/components/Alert";
 import { apiUrl } from "@/config";
 import axios from "axios";
@@ -18,14 +17,7 @@ const Alloha = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const keyIDRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement | null>(null);
-    const keySecretRef = useRef<HTMLInputElement | null>(null); // Create a ref for Add Numbers DID number
-    // const callerNumberRefAddNumbers = useRef<HTMLInputElement | null>(null); // Create a ref for Add Numbers Caller number
-    console.log("key id: ", keyIDRef?.current?.value);
-    console.log("email: ", emailRef?.current?.value);
-    console.log("key secret: ", keySecretRef?.current?.value);
-    console.log(currentLocationId);
-
-
+    const keySecretRef = useRef<HTMLInputElement | null>(null);
 
     const handleAccessNowBtn = () => {
         window.open(
@@ -41,7 +33,7 @@ const Alloha = () => {
             const email = emailRef?.current?.value;
             const keySecret = keySecretRef?.current?.value;
 
-            if (!email || !keyID) {
+            if (!email || !keyID || !keySecret) {
                 alertMsg.current = "Payload Missing";
                 setShowError(true);
                 setTimeout(() => {
@@ -49,22 +41,30 @@ const Alloha = () => {
                 }, 3000);
                 return;
             }
-            await axios.post(`${apiUrl}/api/razorpay/razorpay-profile/update`, {
+            const response = await axios.post(`${apiUrl}/api/razorpay/razorpay-profile/update`, {
                 key_id: keyID,
                 locationId: currentLocationId,
                 email: email,
                 key_secret: keySecret,
+                name: "ClientFlowX CRM",
             });
-            alertMsg.current = "Details Update Success";
-            setShowSuccess(true);
-            setTimeout(() => {
-                setShowSuccess(false);
-            }, 3000);
+            console.log(response);
+
+            console.log(response?.data?.data?.success);
+            if (response?.data?.data?.success) {
+                setIsConnected(true);
+                alertMsg.current = "Details Update Success";
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                }, 3000);
+            }
         } catch (err: any) {
             setShowError(true);
             setTimeout(() => {
                 setShowError(false);
             }, 3000);
+            console.log(err);
             console.log(err?.response?.data);
             alertMsg.current = err?.response?.data?.error || "Some Error Occured";
         }
@@ -115,49 +115,67 @@ const Alloha = () => {
     }, []);
 
     return (
-        <div className="w-[400px] overflow-hidden p-5 md:mb-4 sm:mb-4 lg:mb-0">
+        <div className="w-[400px] overflow-hidden flex flex-col items-center p-5 md:mb-4 sm:mb-4 lg:mb-0 border shadow-sm mt-10 ml-10 rounded-md">
             {(showError || showSuccess) && (
                 <Alert
                     type={showError ? "error" : "success"}
                     message={alertMsg?.current}
                 />
             )}
-            <RazorpayLogo />
-            <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
-                placeholder="Your email here"
-                ref={emailRef}
-                required
-            />
-            <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
-                placeholder="Your key id here"
-                ref={keyIDRef}
-                required
-            />
-            <input
-                type="text"
-                id="first_name"
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
-                placeholder="Your key secret here"
-                ref={keySecretRef}
-                required
-            />
+            <div>
+                <RazorpayLogo />
+            </div>
+            <div className="flex flex-col items-start justify-between gap-1 w-full">
+                <label htmlFor="" className="text-xs font-semibold text-gray-500">
+                    Live Client Id
+                </label>
+                <input
+                    type="text"
+                    id="first_name"
+                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
+                    placeholder="Live client Id"
+                    ref={keyIDRef}
+                    required
+                />
+            </div>
+            <div className="flex flex-col items-start justify-between gap-1 w-full">
+                <label htmlFor="" className="text-xs font-semibold text-gray-500">
+                    Live Secret Id
+                </label>
+                <input
+                    type="text"
+                    id="first_name"
+                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
+                    placeholder="Live secret Id"
+                    ref={keySecretRef}
+                    required
+                />
+            </div>
+            <div className="flex flex-col items-start justify-between gap-1 w-full">
+                <label htmlFor="" className="text-xs font-semibold text-gray-500">
+                    Email
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2"
+                    placeholder="Email"
+                    ref={emailRef}
+                    required
+                />
+            </div>
+
             <button
                 type="submit"
                 className={`mt-4 cursor-default select-none border border-transparent focus:outline-none font-medium 
         rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${isConnected
                         ? "bg-[#37ca411a] text-[#37ca37] "
-                        : "bg-[#38A0DB] text-white"
+                        : "bg-green-500 text-white"
                     }`}
             >
                 {isConnected ? "Connected" : "Connect"}
             </button>
-            <div className="flex">
+            <div className="flex w-full">
                 <button
                     type="submit"
                     onClick={handleSubmit}
@@ -165,13 +183,13 @@ const Alloha = () => {
                 >
                     Update
                 </button>
-                <button
+                {/* <button
                     type="submit"
                     onClick={handleAccessNowBtn}
                     className="text-[#38A0DB] mt-4 border border-[#38A0DB] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-4 py-2 text-center "
                 >
                     Manage
-                </button>
+                </button> */}
             </div>
         </div>
     );

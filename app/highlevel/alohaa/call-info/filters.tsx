@@ -29,64 +29,64 @@ const Filters: React.FC<{
   selectionRange,
   agentList,
 }) => {
-  const [showDateSelector, setShowDateSelector] = useState<boolean>(false);
+    const [showDateSelector, setShowDateSelector] = useState<boolean>(false);
 
-  const handleDateSelector = () => {
-    setShowDateSelector(!showDateSelector);
-  };
+    const handleDateSelector = () => {
+      setShowDateSelector(!showDateSelector);
+    };
 
-  return (
-    <div className="flex items-center mb-4">
-      <select
-        onChange={handleNameFilterUpdate}
-        id="countries"
-        className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-      >
-        <option value="all" selected>
-          Select name
-        </option>
-        {Array.from(agentList)?.map((data, idx) => (
-          <option key={`${data}-${idx}`} value={data}>
-            {data}
+    return (
+      <div className="flex items-center mb-4">
+        <select
+          onChange={handleNameFilterUpdate}
+          id="countries"
+          className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+        >
+          <option value="all" selected>
+            Select name
           </option>
-        ))}
-      </select>
+          {Array.from(agentList)?.map((data, idx) => (
+            <option key={`${data}-${idx}`} value={data}>
+              {data}
+            </option>
+          ))}
+        </select>
 
-      <select
-        onChange={handleStatusFilterUpdate}
-        id="countries"
-        className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-      >
-        <option value="all" selected>
-          Select call status
-        </option>
-        {statusArr?.map((data, idx) => (
-          <option key={`${data.key}-${idx}`} value={data.key}>
-            {data.text}
+        <select
+          onChange={handleStatusFilterUpdate}
+          id="countries"
+          className="mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+        >
+          <option value="all" selected>
+            Select call status
           </option>
-        ))}
-      </select>
+          {statusArr?.map((data, idx) => (
+            <option key={`${data.key}-${idx}`} value={data.key}>
+              {data.text}
+            </option>
+          ))}
+        </select>
 
-      <input
-        type="number"
-        className="bg-white border-2 rounded-md p-2 text-sm mr-2 w-[220px]"
-        placeholder="Minimum call duration(in s)"
-        onChange={handleMinDurationFilterUpdate}
-      />
-      <div className="relative">
-        <span className="cursor-pointer" onClick={handleDateSelector}>
-          <Svg icon={CalenderIcon} width={30} height={30} viewBox="0 0 64 64" />
-        </span>
-        {showDateSelector && (
-          <DateRangePicker
-            className="absolute"
-            ranges={[selectionRange]}
-            onChange={handleSelect}
-          />
-        )}
+        <input
+          type="number"
+          className="bg-white border-2 rounded-md p-2 text-sm mr-2 w-[220px]"
+          placeholder="Minimum call duration(in s)"
+          onChange={handleMinDurationFilterUpdate}
+        />
+        <div className="relative">
+          <span className="cursor-pointer" onClick={handleDateSelector}>
+            <Svg icon={CalenderIcon} width={30} height={30} viewBox="0 0 64 64" />
+          </span>
+          {showDateSelector && (
+            <DateRangePicker
+              className="absolute"
+              ranges={[selectionRange]}
+              onChange={handleSelect}
+            />
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default Filters;

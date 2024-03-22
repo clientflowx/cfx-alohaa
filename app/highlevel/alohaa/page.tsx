@@ -66,6 +66,8 @@ const Alloha = () => {
       setTimeout(() => {
         setShowError(false);
       }, 3000);
+      console.log(err);
+      
       alertMsg.current = err?.response?.data?.error || "Some Error Occured";
     }
   };
