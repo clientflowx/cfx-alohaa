@@ -12,7 +12,10 @@ const Transactions = () => {
   const openSettingsPage = () => {
     const locationId =
       new URL(window.location.href).searchParams.get("locationId") || "1";
-    window.location.href = `https://app.clientflowx.com/v2/location/${locationId}/payments/invoice/settings`;
+    window.open(
+      `https://app.clientflowx.com/v2/location/${locationId}/payments/invoice/settings`,
+      "_blank"
+    );
   };
   return (
     <div className="bg-[#f2f7fa] min-h-screen max-h-fit px-28 pt-2">
@@ -53,13 +56,19 @@ const DropDownButton = () => {
   const handleNewInvoice = () => {
     const locationId =
       new URL(window.location.href).searchParams.get("locationId") || "1";
-    window.location.href = `https://app.clientflowx.com/v2/location/${locationId}/payments/invoices/new`;
+    window.open(
+      `https://app.clientflowx.com/v2/location/${locationId}/payments/invoices/new`,
+      "_blank"
+    );
   };
 
   const handleNewRecurringTemplate = () => {
     const locationId =
       new URL(window.location.href).searchParams.get("locationId") || "1";
-    window.location.href = `https://app.clientflowx.com/v2/location/${locationId}/payments/recurring-template/new`;
+    window.open(
+      `https://app.clientflowx.com/v2/location/${locationId}/payments/recurring-template/new`,
+      "_blank"
+    );
   };
 
   return (

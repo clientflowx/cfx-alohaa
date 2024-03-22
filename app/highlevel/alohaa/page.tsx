@@ -116,7 +116,6 @@ const Alloha = () => {
     const locationId = new URL(window.location.href).searchParams.get(
       "locationId"
     );
-    console.log("from the beginning: ", locationId);
 
     setCurrentLocationId(locationId);
     fetchUserInfo(locationId);

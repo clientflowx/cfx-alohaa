@@ -55,9 +55,7 @@ const Razorpay = () => {
           name: "ClientFlowX CRM",
         }
       );
-      console.log(response);
 
-      console.log(response?.data?.data?.success);
       if (response?.data?.data?.success) {
         setIsConnected(true);
         alertMsg.current = "Details Update Success";
@@ -72,7 +70,7 @@ const Razorpay = () => {
         setShowError(false);
       }, 3000);
       console.log(err);
-      console.log(err?.response?.data);
+
       alertMsg.current = err?.response?.data?.error || "Some Error Occured";
     }
   };
@@ -120,7 +118,7 @@ const Razorpay = () => {
   }, []);
 
   return (
-    <div className="w-[400px] overflow-hidden flex flex-col items-center p-5 md:mb-4 sm:mb-4 lg:mb-0 border shadow-sm mt-10 ml-10 rounded-md">
+    <div className="flex flex-col items-center overflow-hidden rounded-md shadow-sm sm:mb-4">
       {(showError || showSuccess) && (
         <Alert
           type={showError ? "error" : "success"}
