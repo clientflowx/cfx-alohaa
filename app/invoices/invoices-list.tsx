@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEventHandler, useEffect, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useId, useState } from "react";
 import TransactionFilters from "./invoices-filters";
 import { format } from "date-fns";
 import Pill from "@/components/Pill";
@@ -38,63 +38,60 @@ const TransactionList = () => {
   const fetchInvoicesData = async (locationId: string) => {
     const rzpInvoicesData = await axios.get(
       `${apiUrl}/api/razorpay/razorpay-invoices-fetch/all/${locationId}`
-    );
+    ); // TODO create hook that also returns loading state and refactor it
     const crmInvoicesData = await axios.get(
       `${apiUrl}/api/internal/location-invoices-list/L5KNiAsUDWR56VLxY299` //${locationId}
     );
 
-    const {
-      data: {
-        data: { invoices: crmInvoicesDetails = [] },
-      },
-    } = crmInvoicesData;
-
     const newCrmInvoicesList: InvoicesListType[] = [];
-    crmInvoicesDetails.forEach((invoice: InvoicesListType, ind: number) => {
-      const symbol = currencyMap[invoice.currency.toUpperCase()];
-      const obj = {
-        amount: `${symbol}${invoice.total}`,
-        status: invoice.status,
-        customer: invoice.contactDetails.name,
-        date: invoice.updatedAt,
-        invoiceNum: invoice.invoiceNumber,
-        invoiceName: invoice.name,
-      };
-      newCrmInvoicesList.push(obj);
-    });
 
-    const {
-      data: {
-        data: {
-          invoices: { items: rzpInvoicesDetails = [] },
-        },
-      },
-    } = rzpInvoicesData;
+    if (crmInvoicesData?.status === 200 || crmInvoicesData?.data?.success) {
+      let crmInvoicesDetails = crmInvoicesData?.data?.data?.invoices || [];
+      crmInvoicesDetails.forEach((invoice: InvoicesListType, ind: number) => {
+        const symbol = currencyMap[invoice.currency.toUpperCase()];
+        const obj = {
+          amount: `${symbol}${invoice.total}`,
+          status: invoice.status,
+          customer: invoice.contactDetails.name,
+          date: invoice.updatedAt,
+          invoiceNum: invoice.invoiceNumber,
+          invoiceName: invoice.name,
+        };
+        newCrmInvoicesList.push(obj);
+      });
+    }
 
     const newInvoicesList: InvoicesListType[] = [];
-    rzpInvoicesDetails.forEach((invoice: InvoicesListType, ind: number) => {
-      const symbol = currencyMap[invoice.currency.toUpperCase()];
-      const obj = {
-        amount: `${symbol}${invoice.amount}`,
-        status: invoice.status,
-        customer: invoice.customer_details.customer_name,
-        date: invoice.created_at * 1000,
-        invoiceNum: invoice.invoice_number,
-        invoiceName: invoice.description,
-      };
-      newInvoicesList.push(obj);
-    });
 
+    if (rzpInvoicesData?.status === 200 || rzpInvoicesData?.data?.success) {
+      let rzpInvoicesDetails =
+        rzpInvoicesData?.data?.data?.invoices?.items || [];
+      rzpInvoicesDetails.forEach((invoice: InvoicesListType, ind: number) => {
+        const symbol = currencyMap[invoice.currency.toUpperCase()];
+        const obj = {
+          amount: `${symbol}${invoice.amount}`,
+          status: invoice.status,
+          customer: invoice.customer_details.customer_name,
+          date: invoice.created_at * 1000,
+          invoiceNum: invoice.id,
+          invoiceName: invoice.description,
+        };
+        newInvoicesList.push(obj);
+      });
+    }
+    // newCrmInvoicesList.length = 0;
     const allInvoices = [...newInvoicesList, ...newCrmInvoicesList];
     allInvoices.sort((a, b) => {
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
+
     setInvoiceList(allInvoices);
   };
 
   useEffect(() => {
     const locationId =
       new URL(window.location.href).searchParams.get("locationId") || "1";
+
     setCurrentLocationId(locationId);
     fetchInvoicesData(locationId);
   }, []);

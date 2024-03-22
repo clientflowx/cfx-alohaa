@@ -3,7 +3,7 @@ interface PillProps {
   type: "success" | "fail" | "info" | "warning";
   text: string;
 }
-
+// TODO sync pill type
 const Pill: React.FC<PillProps> = ({ type, text }) => {
   const colorMap = {
     success: {
