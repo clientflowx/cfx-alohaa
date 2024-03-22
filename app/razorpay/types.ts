@@ -1,7 +1,7 @@
 interface LocationDataType {
-  keyID: string;
+  keyId: string;
   email: string;
-  KeySecret: string;
+  keySecret: string;
 }
 
 export type { LocationDataType };

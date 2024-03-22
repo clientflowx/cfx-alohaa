@@ -79,14 +79,18 @@ const Razorpay = () => {
   const fetchUserInfo = async (locationId: string | null) => {
     try {
       const { data } = await axios.get(
-        `${apiUrl}/api/crmalloha/fetchlocationinfo/${locationId}`
+        `${apiUrl}/api/razorpay/fetch-location-info/${locationId}`
       );
-
+      console.log(data.data);
       if (data?.success) {
-        if (data?.data?.data?.data?.apiKey) {
-          setLocationData(data?.data?.data?.data);
+        if (data?.data?.keySecret || data?.data?.keyId) {
+          setLocationData({
+            keyId: data?.data?.keyId,
+            keySecret: data?.data?.keySecret,
+            email: data?.data?.email,
+          });
         } else {
-          alertMsg.current = "Please Add Your API Key";
+          alertMsg.current = "Please Add Your Credentials";
           setShowError(true);
           setTimeout(() => {
             setShowError(false);
@@ -100,12 +104,12 @@ const Razorpay = () => {
 
   useEffect(() => {
     // Set the initial value of keyIDRef when apiKey prop changes
-    if (locationData?.keyID && locationData?.email && locationData?.KeySecret)
+    if (locationData?.keyId && locationData?.email && locationData?.keySecret)
       setIsConnected(true);
-    if (locationData?.keyID && locationData?.email) {
-      keyIDRef.current!.value = locationData?.keyID;
+    if (locationData?.keyId && locationData?.email) {
+      keyIDRef.current!.value = locationData?.keyId;
       emailRef.current!.value = locationData?.email;
-      keySecretRef.current!.value = locationData?.KeySecret;
+      keySecretRef.current!.value = locationData?.keySecret;
     }
   }, [locationData]);
 
