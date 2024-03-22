@@ -67,7 +67,7 @@ const Alloha = () => {
         setShowError(false);
       }, 3000);
       console.log(err);
-      
+
       alertMsg.current = err?.response?.data?.error || "Some Error Occured";
     }
   };
@@ -169,10 +169,11 @@ const Alloha = () => {
       <button
         type="submit"
         className={`mt-4 cursor-default select-none border border-transparent focus:outline-none font-medium 
-        rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${isConnected
+        rounded-lg text-sm w-full px-4 py-2 text-center mr-2 ${
+          isConnected
             ? "bg-[#37ca411a] text-[#37ca37] "
             : "bg-[#38A0DB] text-white"
-          }`}
+        }`}
       >
         {isConnected ? "Connected" : "Connect"}
       </button>
