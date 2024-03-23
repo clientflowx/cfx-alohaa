@@ -26,7 +26,7 @@ const PaymentModal = () => {
   const [invoiceDate, setInvoiceDate] = useState<string>(
     new Date(Date.now() + 3600 * 1000 * 24).toISOString().substring(0, 10)
   );
-
+  const [payLink, setPaylink] = useState<string>("");
   const alertMsg = useRef("");
 
   const generatePaymentLink:
@@ -57,15 +57,16 @@ const PaymentModal = () => {
           expire_by: new Date(invoiceDate).getTime(),
         }
       );
-      if (paymentData?.data?.success) {
+
+      if (paymentData?.data?.data?.success) {
         const {
           data: {
             data: { invoiceId },
           },
         } = paymentData;
 
-        const paymentLink = `http://staging.integration.clientflowx.com/razorpay/paylink/${invoiceId}`;
-
+        const paymentLink = `http://staging.integrations.clientflowx.com/razorpay/paylink/${invoiceId}`;
+        setPaylink(paymentLink);
         navigator.clipboard.writeText(paymentLink);
 
         alertMsg.current = "Payment link copied";
@@ -127,8 +128,20 @@ const PaymentModal = () => {
     | undefined = (e) => {
     setInvoiceDate(e.target.value);
   };
+
+  const handlePreview:
+    | React.MouseEventHandler<HTMLButtonElement>
+    | undefined = () => {
+    window.open(payLink, "_blank");
+  };
+
+  const handleCloseModal = () => {
+    //  For avoiding same origin error for iframe.
+    window.parent.postMessage("message", "*");
+  };
+
   return (
-    <div className="bg-zinc-400 min-h-screen pt-6">
+    <div className="bg-zinc-400 bg-opacity-50 min-h-screen pt-6">
       {(showError || showSuccess) && (
         <Alert
           type={showError ? "error" : "success"}
@@ -238,8 +251,10 @@ const PaymentModal = () => {
           </div>
           <div className="mt-8 border-t-2 border-[#f2f7fa] flex items-center justify-between pt-4">
             <button
+              disabled={!(payLink.length > 0)}
+              onClick={handlePreview}
               className="hl-btn inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded 
-            text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-curious-blue-500"
+            text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-curious-blue-500  disabled:opacity-50"
             >
               <Svg
                 icon={eye}
@@ -247,12 +262,14 @@ const PaymentModal = () => {
                 width={24}
                 height={16}
                 viewBox="0 4 24 16"
-              />{" "}
+              />
               <span>Preview</span>
             </button>
             <div className="flex items-center">
               <button
                 type="button"
+                id="rzp-cancel-btn"
+                onClick={handleCloseModal}
                 className="hl-btn inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium mr-2
             rounded text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-curious-blue-500"
               >
