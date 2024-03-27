@@ -11,6 +11,15 @@ import Loader from "@/components/Loader";
 interface TransactionListType {
   [key: string]: any; //to modifiy
 }
+type TransactionType =
+  | "draft"
+  | "issued"
+  | "partially_paid"
+  | "paid"
+  | "cancelled"
+  | "expired"
+  | "deleted"
+  | "overdue";
 
 const TransactionList = () => {
   const [currentLocationId, setCurrentLocationId] = useState<string>("1");
@@ -42,7 +51,7 @@ const TransactionList = () => {
       `${apiUrl}/api/razorpay/razorpay-payments/${locationId}`
     );
     const crmTransactionsData = await axios.get(
-      `${apiUrl}/api/internal/location-transaction-list/L5KNiAsUDWR56VLxY299` //${locationId}
+      `${apiUrl}/api/internal/location-transaction-list/${locationId}` //${locationId}
     );
 
     const {
@@ -80,7 +89,7 @@ const TransactionList = () => {
       (transaction: TransactionListType, ind: number) => {
         const symbol = currencyMap[transaction.currency.toUpperCase()];
         const obj = {
-          amount: `${symbol}${transaction.amount}`,
+          amount: `${symbol}${transaction.amount / 100}`,
           status: transaction.status,
           customer: transaction.contact,
           date: transaction.created_at * 1000,
@@ -122,13 +131,7 @@ const TransactionList = () => {
     );
   });
 
-  const statusArr = [
-    "Succeeded",
-    "Processing",
-    "Refunded",
-    "Failed",
-    "Pending",
-  ];
+  const statusArr = ["Succeeded", "Captured", "Failed"];
 
   const selectionRange = {
     startDate,
@@ -166,6 +169,7 @@ const TransactionList = () => {
     log: { [key: string]: string },
     ind: number
   ) => {
+    console.log(log["status"]);
     if (key === "date")
       return (
         <td key={`transaction-${ind}`} className="py-4 text-center">
@@ -178,18 +182,7 @@ const TransactionList = () => {
           key={`transaction-${ind}`}
           className="py-4 text-center flex justify-center"
         >
-          <Pill
-            type={
-              log["status"] === "succeeded"
-                ? "success"
-                : log["status"] === "failed"
-                ? "fail"
-                : log["status"] === "info"
-                ? "info"
-                : "warning"
-            }
-            text={log[key]}
-          />
+          <Pill type={log["status"] as TransactionType} text={log[key]} />
         </td>
       );
     else

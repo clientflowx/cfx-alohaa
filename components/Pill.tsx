@@ -1,27 +1,78 @@
 "use client";
 interface PillProps {
-  type: "success" | "fail" | "info" | "warning";
+  type:
+    | "draft"
+    | "issued"
+    | "partially_paid"
+    | "paid"
+    | "cancelled"
+    | "expired"
+    | "deleted"
+    | "overdue"
+    | "succeeded"
+    | "failed"
+    | "captured";
   text: string;
 }
-// TODO sync pill type
+
 const Pill: React.FC<PillProps> = ({ type, text }) => {
   const colorMap = {
-    success: {
-      textClass: "text-[#12b76a]",
-      borderClass: "border-[#12b76a]",
-      bgClass: "bg-[#e6ffed]",
+    paid: {
+      textClass: "text-green-500",
+      borderClass: "border-green-500",
+      bgClass: "bg-green-100",
     },
-    fail: {
+    succeeded: {
+      textClass: "text-green-500",
+      borderClass: "border-green-500",
+      bgClass: "bg-green-100",
+    },
+    sent: {
+      textClass: "text-green-500",
+      borderClass: "border-green-500",
+      bgClass: "bg-green-100",
+    },
+    partially_paid: {
+      textClass: "text-lime-500",
+      borderClass: "border-lime-500",
+      bgClass: "bg-lime-100",
+    },
+    overdue: {
       textClass: "text-[#ff6483]",
       borderClass: "border-[#ff6483]",
       bgClass: "bg-[#fce8e8]",
     },
-    info: {
-      textClass: "text-[#007ace]",
-      borderClass: "border-[#007ace]",
-      bgClass: "bg-[#e6f7ff]",
+    failed: {
+      textClass: "text-[#ff6483]",
+      borderClass: "border-[#ff6483]",
+      bgClass: "bg-[#fce8e8]",
     },
-    warning: {
+    cancelled: {
+      textClass: "text-[#ff6483]",
+      borderClass: "border-[#ff6483]",
+      bgClass: "bg-[#fce8e8]",
+    },
+    expired: {
+      textClass: "text-[#ff6483]",
+      borderClass: "border-[#ff6483]",
+      bgClass: "bg-[#fce8e8]",
+    },
+    deleted: {
+      textClass: "text-[#ff6483]",
+      borderClass: "border-[#ff6483]",
+      bgClass: "bg-[#fce8e8]",
+    },
+    draft: {
+      textClass: "text-gray-500",
+      borderClass: "border-gray-500",
+      bgClass: "bg-gray-200",
+    },
+    issued: {
+      textClass: "text-[#fca103]",
+      borderClass: "border-[#fca103]",
+      bgClass: "bg-[#fff7e6]",
+    },
+    captured: {
       textClass: "text-[#fca103]",
       borderClass: "border-[#fca103]",
       bgClass: "bg-[#fff7e6]",
