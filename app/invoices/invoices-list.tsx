@@ -38,6 +38,7 @@ const TransactionList = () => {
     { key: "date", text: "Issue Date" },
     { key: "amount", text: "Amount" },
     { key: "status", text: "Status" },
+    { key: "invoiceLink", text: "Invoice Link" },
   ];
   const currencyMap: { [key: string]: string } = {
     USD: "$",
@@ -71,7 +72,7 @@ const TransactionList = () => {
     }
 
     const newInvoicesList: InvoicesListType[] = [];
-
+    // TODO Add config.js file for controlling base url
     if (rzpInvoicesData?.status === 200 || rzpInvoicesData?.data?.success) {
       let rzpInvoicesDetails =
         rzpInvoicesData?.data?.data?.invoices?.items || [];
@@ -84,6 +85,7 @@ const TransactionList = () => {
           date: invoice.created_at * 1000,
           invoiceNum: invoice.id,
           invoiceName: invoice.description,
+          invoiceLink: `https://staging.integrations.clientflowx.com/razorpay/paylink/${invoice.id}`,
         };
         newInvoicesList.push(obj);
       });
@@ -181,6 +183,20 @@ const TransactionList = () => {
         >
           <Pill type={log["status"] as TransactionType} text={log[key]} />
         </td>
+      );
+    else if (key === "invoiceLink")
+      return (
+        <>
+          {log["invoiceLink"] ? (
+            <td key={`invoice-${ind}`} className="py-4 text-center">
+              <a href={log["invoiceLink"]}>Link</a>
+            </td>
+          ) : (
+            <td key={`invoice-${ind}`} className="py-4 text-center">
+              No Link Available
+            </td>
+          )}
+        </>
       );
     else
       return (
