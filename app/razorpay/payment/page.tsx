@@ -7,14 +7,14 @@ import eye from "@/svg/eye";
 import PlusIcon from "@/svg/plus";
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface InputField {
   [key: string]: string | number;
 }
 
 const PaymentModal = () => {
-  const [inputFields, setInputFields] = useState([
+  const [inputFields, setInputFields] = useState<InputField[]>([
     {
       itemName: "",
       itemPrice: 0,
@@ -136,9 +136,21 @@ const PaymentModal = () => {
   };
 
   const handleCloseModal = () => {
+    // Reset data on cancel button press
+    setInputFields([{ itemName: "", itemPrice: 0 }]);
+    setTotalAmount(0);
+    setInvoiceDate(
+      new Date(Date.now() + 3600 * 1000 * 24).toISOString().substring(0, 10)
+    );
     //  For avoiding same origin error for iframe.
     window.parent.postMessage("message", "*");
   };
+
+  useEffect(() => {
+    window.addEventListener("message", ({ data }) => {
+      console.log(data);
+    });
+  }, []);
 
   return (
     <div className="bg-zinc-400 bg-opacity-50 min-h-screen pt-6">
