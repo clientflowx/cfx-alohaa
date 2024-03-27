@@ -28,6 +28,8 @@ const PaymentModal = () => {
   );
   const [payLink, setPaylink] = useState<string>("");
   const alertMsg = useRef("");
+  const [fields, setFields] = useState<{ [key: string]: string }>({});
+  const fieldRef = useRef<{ [key: string]: string }>(fields);
 
   const generatePaymentLink:
     | React.FormEventHandler<HTMLFormElement>
@@ -48,9 +50,9 @@ const PaymentModal = () => {
           currency: "INR",
           line_items: invoiceItems,
           customer: {
-            name: "Gaurav Kumar",
-            email: "gaurav.kumar@example.com",
-            contact: "+919000090000",
+            name: fields.nameField,
+            email: fields.emailField,
+            contact: fields.phoneField,
           },
           sms_notify: 1,
           email_notify: 1,
@@ -149,6 +151,8 @@ const PaymentModal = () => {
   useEffect(() => {
     window.addEventListener("message", ({ data }) => {
       console.log(data);
+      fieldRef.current = data;
+      setFields(fieldRef.current);
     });
   }, []);
 
@@ -167,8 +171,8 @@ const PaymentModal = () => {
           </span>
           <span className="text-[#607179] text-[16px]">
             The details that you add below will be added to an invoice link that
-            you can send to Prashant Prakash Dubey. Invoices are created within
-            our system and you can track the status of payments here
+            you can send to {fields.nameField}. Invoices are created within our
+            system and you can track the status of payments here
           </span>
         </div>
 
